@@ -1,2 +1,2 @@
 print("Hello")
-print("william är en apa")
+print("hallå")
