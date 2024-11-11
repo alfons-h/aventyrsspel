@@ -9,8 +9,8 @@ class Player:
         print()
         print("     Spelar Stats     ")
         print("══════════════════════")
-        print("Player name: " + (self.name))
-        print("Player hp: " + str(self.hp))
+        print("Player Name: " + (self.name))
+        print("Player HP: " + str(self.hp))
         print("Level: " + str(self.lvl))
 
 player = Player(name, 1, 100)
@@ -50,6 +50,11 @@ class Monster:
     def __str__(self):
         return f"{self.name}: HP {self.hp}, Level {self.lvl}"
 
-zombie = Monster("Zombie", 50, 2)
-dragon = Monster("Dragon", 300, 10)
-vampire = Monster("Vampire", 150, 7)
+rat = Monster("Rat", 3, 1)
+slime = Monster("Slime", 10, 3)
+goblin = Monster("Goblin", 25, 7)
+zombie = Monster("Zombie", 50, 10)
+ghost_knight = Monster ("Ghost Knight", 75, 12)
+vampire = Monster("Vampire", 100, 15)
+werewolf = Monster ("Werewolf", 150, 20)
+dragon = Monster("Dragon", 500, 100)
