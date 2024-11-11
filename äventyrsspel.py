@@ -50,11 +50,11 @@ class Monster:
     def __str__(self):
         return f"{self.name}: HP {self.hp}, Level {self.lvl}"
 
-rat = Monster("Rat", 3, 1)
+rat = Monster("Råtta", 3, 1)
 slime = Monster("Slime", 10, 3)
 goblin = Monster("Goblin", 25, 7)
 zombie = Monster("Zombie", 50, 10)
-ghost_knight = Monster ("Ghost Knight", 75, 12)
-vampire = Monster("Vampire", 100, 15)
-werewolf = Monster ("Werewolf", 150, 20)
-dragon = Monster("Dragon", 500, 100)
+ghost = Monster ("Spöke", 75, 12)
+vampire = Monster("Vampyr", 100, 15)
+werewolf = Monster ("Varulv", 150, 20)
+dragon = Monster("Drake", 500, 100)
