@@ -41,8 +41,15 @@ class Inventory:
 
             
 
-class Creature:
-    def __init__(monster,name,hp,lvl):
-        monster.name = name
-        monster.hp = hp
-        monster.lvl = lvl
+class Monster:
+    def __init__(self, name, hp, lvl):
+        self.name = name
+        self.hp = hp
+        self.lvl = lvl
+
+    def __str__(self):
+        return f"{self.name}: HP {self.hp}, Level {self.lvl}"
+
+zombie = Monster("Zombie", 50, 2)
+dragon = Monster("Dragon", 300, 10)
+vampire = Monster("Vampire", 150, 7)
