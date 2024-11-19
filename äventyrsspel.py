@@ -1,17 +1,21 @@
+import random
 name = input("Vad heter du?--> ")
-print("Välkommen " + name + " till grottkravlare.")
+
 
 class Player:
     def __init__(self, name, lvl, hp):
         self.name = name.capitalize()
         self.hp = hp
         self.lvl = lvl
+        print("Välkommen " + self.name + " till grottkravlare.")
         print()
         print("     Spelar Stats     ")
         print("══════════════════════")
         print("Player Name: " + (self.name))
         print("Player HP: " + str(self.hp))
         print("Level: " + str(self.lvl))
+        print("══════════════════════")
+
 
 player = Player(name, 1, 100)
 
@@ -50,11 +54,31 @@ class Monster:
     def __str__(self):
         return f"{self.name}: HP {self.hp}, Level {self.lvl}"
 
-rat = Monster("Råtta", 3, 1)
-slime = Monster("Slime", 10, 3)
-goblin = Monster("Goblin", 25, 7)
-zombie = Monster("Zombie", 50, 10)
-ghost = Monster ("Spöke", 75, 12)
-vampire = Monster("Vampyr", 100, 15)
-werewolf = Monster ("Varulv", 150, 20)
-dragon = Monster("Drake", 500, 100)
+monsters = [
+    Monster("Råtta", 3, 1),
+    Monster("Slime", 10, 3),
+    Monster("Goblin", 25, 7),
+    Monster("Zombie", 50, 10),
+    Monster("Spöke", 75, 12),
+    Monster("Vampyr", 100, 15),
+    Monster("Varulv", 150, 20),
+    Monster("Drake", 500, 100)
+]
+
+current_monster = random.choice(monsters) # Får fixa den här senare när vi har fixat rum och dörrar o sånt
+
+print(f"Du stöter på {current_monster.name}.")
+print(f"{current_monster.name} har {current_monster.hp} HP")
+
+def monster_attack(current_monster, player):
+    damage = random.randint(3, 10) * current_monster.lvl // 2
+    print(f"{current_monster.name} attackerar dig och gör {damage} skada!")
+    player.hp = max(0, player.hp - damage)
+    if player.hp > 0:
+        print(f"Du har nu {player.hp} HP kvar.")
+    else:
+        print(f"Du dog!")
+        exit()
+
+
+monster_attack(current_monster, player)
