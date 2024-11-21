@@ -71,6 +71,7 @@ monsters = [
 
 current_monster = random.choice(monsters) # Får fixa den här senare när vi har fixat rum och dörrar o sånt
 
+print(current_monster.bild)
 print(f"Du stöter på {current_monster.name}.")
 print(f"{current_monster.name} har {current_monster.hp} HP")
 
