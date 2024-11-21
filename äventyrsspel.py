@@ -1,28 +1,41 @@
-
+import time
 import random
 
 name = input("Vad heter du?--> ")
 
 
 class Player:
-    def __init__(self, name, lvl, hp, armor):
+    def __init__(self, name, lvl, hp, armor, gold):
         self.name = name.capitalize()
         self.hp = hp
         self.lvl = lvl
         self.armor = armor
+        self.gold = gold
+        
+        print("""
+              
+              """)
         print("Välkommen " + self.name + " till grottkravlare.")
+        time.sleep(0.1)
         print()
+        time.sleep(0.05)
         print("     Spelar Stats     ")
+        time.sleep(0.05)
         print("══════════════════════")
+        time.sleep(0.05)
         print(f"Player Name: {self.name}")
+        time.sleep(0.05)
         print(f"Player HP: {self.hp}")
+        time.sleep(0.05)
         print(f"Level: {self.lvl}")
+        time.sleep(0.05)
         print(f"Armor: {self.armor}")
+        time.sleep(0.05)
+        print(f"Guld: {self.gold}")
+        time.sleep(0.05)
         print("══════════════════════")
 
-
-player = Player(name, 1, 100, 20)
-
+player = Player(name, 1, 100, 20, 0)
 
 class Inventory:
     def __init__(self):
@@ -218,17 +231,22 @@ monsters = [
 
 current_monster = random.choice(monsters)
 
-print(current_monster)  
-print(f"Du stöter på {current_monster.name}.")
+time.sleep(2)
+print(current_monster) 
+time.sleep(0.5)
+print(f"Du stöter på level {current_monster.lvl} {current_monster.name}.")
+time.sleep(0.5)
 print(f"{current_monster.name} har {current_monster.hp} HP.")
+time.sleep(2)
 
 
 def monster_attack(current_monster, player):
-    damage = random.randint(2, 5) * current_monster.lvl/2
+    damage = random.randint(2, 5) * current_monster.lvl // 2
     print(f"{current_monster.name} attackerar dig och gör {damage} skada!")
+    time.sleep(1)
     player.hp = max(0, player.hp - damage)
     if player.hp > 0:
-        print(f"Du har nu {player.hp} HP kvar.")
+        print(f"Du överlever med {player.hp} HP kvar.")
     else:
         print(f"Du dog!")
         exit()
