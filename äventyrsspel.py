@@ -1,4 +1,5 @@
 import random
+
 name = input("Vad heter du?--> ")
 
 
@@ -12,10 +13,10 @@ class Player:
         print()
         print("     Spelar Stats     ")
         print("══════════════════════")
-        print("Player Name: " + (self.name))
-        print("Player HP: " + str(self.hp))
-        print("Level: " + str(self.lvl))
-        print("Armor:" + str(self.armor))
+        print(f"Player Name: {self.name}")
+        print(f"Player HP: {self.hp}")
+        print(f"Level: {self.lvl}")
+        print(f"Armor: {self.armor}")
         print("══════════════════════")
 
 
@@ -42,11 +43,10 @@ class Inventory:
                 del self.items[item_name]
                 print(f"{quantity} {item_name} togs bort och finns inte längre i inventariet")
             else:
-                print(f"Inte tillrräkligt med {item_name} för att ta bort. Bara {self.items[item_name]} är tillgängliga.")
+                print(f"För få {item_name} för att ta bort. Bara {self.items[item_name]} är tillgängliga.")
         else:
             print(f"{item_name} hittades inte")
 
-            
 
 class Monster:
     def __init__(self, name, hp, lvl, bild):
@@ -56,24 +56,50 @@ class Monster:
         self.bild = bild
 
     def __str__(self):
-        return f"{self.name}: HP {self.hp}, Level {self.lvl}, {self.bild}"
+        return f"{self.name}: HP {self.hp}, Level {self.lvl}\n{self.bild}"
+
+
+rat_img = """lägg in bild"""
+slime_img = """lägg in bild"""
+goblin_img = """lägg in bild"""
+zombie_img = """lägg in bild"""
+ghost_img = """lägg in bild"""
+vampire_img = """lägg in bild"""
+werewolf_img = """lägg in bild"""
+dragon_img = r"""                 ___====-_  _-====___
+           _--^^^#####//      \\#####^^^--_
+        _-^##########// (    ) \\##########^-_
+       -############//  |\^^/|  \\############-
+     _/############//   (@::@)   \\############\_
+    /#############((     \\//     ))#############\
+   -###############\\    (oo)    //###############-
+  -#################\\  / VV \  //#################-
+ -###################\\/      \//###################-
+_#/|##########/\######(   /\   )######/\##########|\#_
+|/ |#/\#/\#/\/  \#/\##\  |  |  /##/\#/  \/\#/\#/\#| \|
+`  |/  V  V  `   V  \#\| |  | |/#/  V   '  V  V  \|  '
+   `   `  `      `   / | |  | | \   '      '  '   '
+                    (  | |  | |  )
+                   __\ | |  | | /__
+                  (vvv(VVV)(VVV)vvv)"""
 
 monsters = [
-    Monster("Råtta", 3, 1, "LÄGG IN BILD HÄR"),
-    Monster("Slime", 10, 3, "LÄGG IN BILD HÄR"),
-    Monster("Goblin", 25, 7, "LÄGG IN BILD HÄR"),
-    Monster("Zombie", 50, 10, "LÄGG IN BILD HÄR"),
-    Monster("Spöke", 75, 12, "LÄGG IN BILD HÄR"),
-    Monster("Vampyr", 100, 15, "LÄGG IN BILD HÄR"),
-    Monster("Varulv", 150, 20, "LÄGG IN BILD HÄR"),
-    Monster("Drake", 500, 100, "LÄGG IN BILD HÄR")
+    Monster("Råtta", 3, 1, rat_img),
+    Monster("Slime", 10, 3, slime_img),
+    Monster("Goblin", 25, 7, goblin_img),
+    Monster("Zombie", 50, 10, zombie_img),
+    Monster("Spöke", 75, 12, ghost_img),
+    Monster("Vampyr", 100, 15, vampire_img),
+    Monster("Varulv", 150, 20, werewolf_img),
+    Monster("Drake", 500, 100, dragon_img)
 ]
 
-current_monster = random.choice(monsters) # Får fixa den här senare när vi har fixat rum och dörrar o sånt
+current_monster = random.choice(monsters)
 
-print(current_monster.bild)
+print(current_monster)  
 print(f"Du stöter på {current_monster.name}.")
-print(f"{current_monster.name} har {current_monster.hp} HP")
+print(f"{current_monster.name} har {current_monster.hp} HP.")
+
 
 def monster_attack(current_monster, player):
     damage = random.randint(3, 10) * current_monster.lvl
