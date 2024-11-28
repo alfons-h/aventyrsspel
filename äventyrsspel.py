@@ -22,7 +22,6 @@ class Player:
         print("     Spelar Stats     ")
         time.sleep(0.05)
         print("══════════════════════")
-        time.sleep(0.05)
         print(f"Player Name: {self.name}")
         time.sleep(0.05)
         print(f"Player HP: {self.hp}")
@@ -32,7 +31,6 @@ class Player:
         print(f"Armor: {self.armor}")
         time.sleep(0.05)
         print(f"Guld: {self.gold}")
-        time.sleep(0.05)
         print("══════════════════════")
 
 player = Player(name, 1, 100, 20, 0)
@@ -251,28 +249,41 @@ def monster_attack(current_monster, player):
         print(f"Du dog!")
         exit()
 
+def player_attack(player, current_monster):
+    damage = random.randint(3, 4) * player.lvl * 2
+    print(f"Du attackerar {current_monster.name} och gör {damage} skada!")
+    time.sleep(1)
+    current_monster.hp = max(0, current_monster.hp - damage)
+    if current_monster.hp > 0:
+        print(f"{current_monster.name} överlever med {current_monster.hp} HP kvar.")
+    else:
+        print(f"Du dödade {current_monster.name}, som droppar {current_monster.lvl} guld.")
+        player.gold += current_monster.lvl
+        print(f"Du har nu {player.gold} guld.")
 
-monster_attack(current_monster, player)
+def continue_fight(player, current_monster):
+    while current_monster.hp > 0 and player.hp > 0:
+        monster_attack(current_monster, player)
 
-def game_loop():
-    while True:
-        print("\nVad vill du göra?")
-        print("1. Attackera monstret")
-        print("2. Undersök monstret")
-        print("3. Skriv 'stop' för att avsluta spelet.")
-        
-        action = input("--> ").strip().lower()
-        
-        if action == "1":
-            print(f"Du attackerar {current_monster.name}!")
-            # Lägg till attacklogik här
-        elif action == "2":
-            print(f"{current_monster}")
-        elif action == "stop":
-            print("Spelet avslutas. Tack för att du spelade!")
-            break
+        if player.hp > 0:
+            svar1 = input("Vill du attackera? Svara Ja/Nej: ").strip().lower()
+
+            if svar1 == "ja":
+                player_attack(player, current_monster)
+            elif svar1 == "nej":
+                print(f"Du står över din tur. {current_monster.name} attackerar igen.")
+            else:
+                print("Ogiltigt svar, försök igen.")
+                continue
+
+            if current_monster.hp > 0:
+                monster_attack(current_monster, player)
         else:
-            print("Ogiltigt val, försök igen.")
+            print("Du har förlorat och kan inte fortsätta.")
+            exit()
 
-# Starta game-loopen
-game_loop()
+    if current_monster.hp <= 0:
+        print(f"Du har dödat {current_monster.name}.")
+        exit()
+
+continue_fight(player, current_monster)
