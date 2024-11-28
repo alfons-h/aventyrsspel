@@ -253,3 +253,26 @@ def monster_attack(current_monster, player):
 
 
 monster_attack(current_monster, player)
+
+def game_loop():
+    while True:
+        print("\nVad vill du göra?")
+        print("1. Attackera monstret")
+        print("2. Undersök monstret")
+        print("3. Skriv 'stop' för att avsluta spelet.")
+        
+        action = input("--> ").strip().lower()
+        
+        if action == "1":
+            print(f"Du attackerar {current_monster.name}!")
+            # Lägg till attacklogik här
+        elif action == "2":
+            print(f"{current_monster}")
+        elif action == "stop":
+            print("Spelet avslutas. Tack för att du spelade!")
+            break
+        else:
+            print("Ogiltigt val, försök igen.")
+
+# Starta game-loopen
+game_loop()
