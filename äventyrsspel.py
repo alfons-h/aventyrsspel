@@ -227,6 +227,25 @@ monsters = [
     Monster("Drake", 500, 100, dragon_img)
 ]
 
+def choose_door():
+    print("Du står framför tre dörrar. Vilken vill du öppna?")
+    time.sleep(1)
+    print("1. Dörr 1")
+    print("2. Dörr 2")
+    print("3. Dörr 3")
+    
+    while True:
+        choice = input("Skriv numret på dörren du vill öppna (1, 2 eller 3): ").strip()
+        if choice in ["1", "2", "3"]:
+            print(f"Du öppnar dörr {choice}...")
+            time.sleep(2)
+            return
+        else:
+            print("Ogiltigt val, försök igen.")
+
+
+choose_door()
+
 current_monster = random.choice(monsters)
 
 time.sleep(2)
@@ -279,11 +298,11 @@ def continue_fight(player, current_monster):
             if current_monster.hp > 0:
                 monster_attack(current_monster, player)
         else:
-            print("Du har förlorat och kan inte fortsätta.")
+            print("Du dog!")
             exit()
 
     if current_monster.hp <= 0:
         print(f"Du har dödat {current_monster.name}.")
-        exit()
+        choose_door()
 
 continue_fight(player, current_monster)
