@@ -16,6 +16,9 @@ class Player:
               
               """)
         print("Välkommen " + self.name + " till grottkravlare.")
+        self.showstats()
+        
+    def showstats(self):
         time.sleep(0.1)
         print()
         time.sleep(0.05)
@@ -24,16 +27,16 @@ class Player:
         print("══════════════════════")
         print(f"Player Name: {self.name}")
         time.sleep(0.05)
-        print(f"Player HP: {self.hp}")
-        time.sleep(0.05)
         print(f"Level: {self.lvl}")
+        time.sleep(0.05)
+        print(f"Player HP: {self.hp}")
         time.sleep(0.05)
         print(f"Armor: {self.armor}")
         time.sleep(0.05)
         print(f"Guld: {self.gold}")
         print("══════════════════════")
 
-player = Player(name, 1, 100, 20, 0)
+player = Player(name, 1, 100, 0, 5)
 
 class Inventory:
     def __init__(self):
@@ -283,13 +286,14 @@ def monster_attack(player, current_monster):
                 print(f"{current_monster.name} överlever med {current_monster.hp} HP kvar.")
             else:
                 print(f"Du dödade {current_monster.name}, som droppar {current_monster.lvl} guld.")
+                print(f"Du överlever med {player.hp} HP")
                 player.gold += current_monster.lvl
                 print(f"Du har nu {player.gold} guld.")
                 break
         elif svar == "nej":
             print(f"Du står över din tur. {current_monster.name} attackerar igen.")
         else:
-            print("Ogiltigt svar, försök igen.")
+            print("Ogiltigt svar, monstret attackerar.")
 
 
 monster_attack(player, current_monster)
