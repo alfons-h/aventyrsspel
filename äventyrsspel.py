@@ -220,7 +220,7 @@ dragon_img = r"""
 
 monsters = [
     Monster("Råtta", 3, 1, rat_img),
-    Monster("Scorpion", 5, 2, scorpion_img),
+    Monster("Skorpion", 5, 2, scorpion_img),
     Monster("Slime", 10, 3, slime_img),
     Monster("Goblin", 25, 7, goblin_img),
     Monster("Zombie", 50, 10, zombie_img),
