@@ -114,11 +114,12 @@ class Inventory:
 
 
 class Monster:
-    def __init__(self, name, hp, lvl, bild):
+    def __init__(self, name, hp, lvl, img,):
         self.name = name
         self.hp = hp
         self.lvl = lvl
-        self.bild = bild
+        self.bild = img
+        self.escape_threshold = 10
 
     def __str__(self):
         return f"{self.name}: HP {self.hp}, Level {self.lvl}\n{self.bild}"
@@ -327,6 +328,7 @@ def monster_attack(player, current_monster):
             print(f"Du överlever med {player.hp} HP kvar.")
         else:
             print("""
+
                                                                                                                                                                                                     [0m
                                                                                                                                                                                     [0m
                                                                                                                       [38;2;255;162;162m*[38;2;255;27;27m0[38;2;255;9;9m0[38;2;255;1;1m0[38;2;255;0;0m0[38;2;255;6;6m0[38;2;255;18;18m0[38;2;255;93;93mo                          [38;2;255;158;158m*[38;2;255;67;67mO[38;2;255;57;57mO[38;2;255;30;30m0[38;2;255;57;57mO[38;2;255;85;85mo[38;2;255;148;148m*                     [0m
@@ -349,12 +351,16 @@ def monster_attack(player, current_monster):
                                                                                                                                                                                     [0m
                                                                                                                                                                                     [0m
 
+                  
                   """)
             exit()
 
-         # Spelarens attack (valfri)
-        svar = input("Vill du attackera? Svara Ja/Nej: ").strip().lower()
-        if svar == "ja":
+         # Spelarens attack eller flykt
+        svar = input("""Vad vill du göra?
+1. Attackera
+2. Fly
+""").strip().lower()
+        if svar == "1" or svar == "attackera" or svar == "attack":
             damage = random.randint(3, 4) * player.lvl * 2
             print(f"Du attackerar {current_monster.name} och gör {damage} skada!")
             time.sleep(1)
@@ -363,17 +369,24 @@ def monster_attack(player, current_monster):
             if current_monster.hp > 0:
                 print(f"{current_monster.name} överlever med {current_monster.hp} HP kvar.")
             else:
-                #Räkna ut loot
-                gold_loot = int(current_monster.lvl / 2) ** 2 + 1
+                #Räknar ut loot
+                gold_loot = int(current_monster.lvl // 2) ** 2 + 1
                 xp_loot = int((current_monster.lvl) ** 1.5) + 3
                 print(f"💀 Du dödade {current_monster.name}, som droppar \033[38;5;226m{int(current_monster.lvl/2)**2+1} guld\033[0m. 💀")
                 print(f"Du överlever med {player.hp} HP")
-                #Lägg till loot till spelaren
+                #Lägger till loot till spelaren
                 player.gold += gold_loot
                 player.gain_xp(xp_loot)
                 break
-        elif svar == "nej":
-            print(f"Du står över din tur. {current_monster.name} attackerar igen.")
+        elif svar == "2" or svar == "fly":
+            # Försök att fly
+            dice_roll = random.randint(1, 18) - ((current_monster.lvl) // 2) + player.lvl
+            print(f"Du försöker fly från {current_monster.name}...")
+            if dice_roll > current_monster.escape_threshold:
+                print(f"Du lyckades fly från {current_monster.name}!")
+                break
+            else:
+                print(f"Du misslyckades att fly från {current_monster.name}.")
         else:
             print("Ogiltigt svar, monstret attackerar.")
 
