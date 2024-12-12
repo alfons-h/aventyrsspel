@@ -5,10 +5,11 @@ name = input("Vad heter du?--> ")
 
 
 class Player:
-    def __init__(self, name, lvl, hp, armor, gold):
+    def __init__(self, name, lvl, xp, hp, armor, gold):
         self.name = name.capitalize()
         self.hp = hp
         self.lvl = lvl
+        self.xp = xp
         self.armor = armor
         self.gold = gold
         
@@ -16,6 +17,12 @@ class Player:
               
               """)
         print("Välkommen " + self.name + " till grottkravlare.")
+        print("Du vaknar i mörkret, omgiven av kalla stenväggar.")
+        time.sleep(1)
+        print("Framför dig ser du tre massiva dörrar, var och en med märkliga symboler inristade.")
+        time.sleep(2)
+        print("Minnet är blankt, men något säger dig att valet du gör här kommer forma din öde.")
+        time.sleep(2)
         self.showstats()
         
     def showstats(self):
@@ -27,16 +34,59 @@ class Player:
         print("══════════════════════")
         print(f"Player Name: {self.name}")
         time.sleep(0.05)
-        print(f"Level: {self.lvl}")
+        print(f"Level: \033[38;5;213m{self.lvl}\033[0m")
         time.sleep(0.05)
-        print(f"Player HP: {self.hp}")
+        print(f"XP: \033[38;5;34m{self.xp}\033[0m")
         time.sleep(0.05)
-        print(f"Armor: {self.armor}")
+        print(f"HP: \033[38;5;196m{self.hp}\033[0m")
         time.sleep(0.05)
-        print(f"Guld: {self.gold}")
+        print(f"Armor: \033[38;5;153m{self.armor}\033[0m")
+        time.sleep(0.05)
+        print(f"Guld: \033[38;5;226m{self.gold}\033[0m")
         print("══════════════════════")
 
-player = Player(name, 1, 100, 0, 5)
+    def gain_xp(player, amount):
+        player.xp += amount
+        print(f"\033[38;5;34mDu har fått {amount} XP!\033[0m")
+        player.check_level_up()
+
+    def check_level_up(self):
+        xp_needed = 100 + 0.8 * (self.lvl ** 2)
+        while self.xp >= xp_needed:
+            self.xp -= xp_needed
+            self.lvl += 1
+            xp_needed = 100 + 0.8 * (self.lvl ** 2)
+            print(f"\033[38;5;213mGrattis {self.name}, du har nått Level {self.lvl}!\033[0m")
+        self.showstats()
+        
+        
+player = Player(name, 1, 0, 100, 0, 5)
+
+def player_command():
+    while True:
+        command = input(
+"""
+Vad vill du göra? 
+1. Gå vidare (fortsätt)
+2. Visa stats (stats)
+3. Något annat som vi inte lagt till (placeholder)
+""").strip().lower()
+        if command == "stats":
+            player.showstats()
+        elif command == "fortsätt":
+            choose_door()
+        elif command == "2":
+            player.showstats()
+        elif command == "1":
+            choose_door()        
+        elif command == "placeholder":
+            print("Vi har inte fixat det här ännu")
+            choose_door()
+        elif command == "3":
+            print("Vi har inte fixat det här ännu")
+            choose_door()
+        else:
+            print("Ogiltigt kommando. Försök igen.")
 
 class Inventory:
     def __init__(self):
@@ -101,7 +151,7 @@ slime_img = r"""
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⠟⠛⠛⠿⡄⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⡟⢡⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⠀⣀⣉⣤⣤⣤⡀⣤⣄⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⣠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠻⣿⣦⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠻⣿⣦⠀⠀⠀⠀⠀⠀     
 ⠀⠀⠀⢀⣠⣤⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⣽⣿⣷⣄⠀⠀⠀⠀
 ⠀⠀⣾⡿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣿⣿⣿⣿⣷⣄⠀⠀
 ⠀⢀⣼⡀⠀⠀⠈⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠿⣿⠃⠀
@@ -253,6 +303,7 @@ def get_custom_monster(name, monsters):
             return monster
     return random.choice(monsters)
 
+choose_door()
 current_monster = get_custom_monster(name, monsters)
 
 time.sleep(2)
@@ -301,7 +352,7 @@ def monster_attack(player, current_monster):
                   """)
             exit()
 
-        # Spelarens attack (valfri)
+         # Spelarens attack (valfri)
         svar = input("Vill du attackera? Svara Ja/Nej: ").strip().lower()
         if svar == "ja":
             damage = random.randint(3, 4) * player.lvl * 2
@@ -312,10 +363,14 @@ def monster_attack(player, current_monster):
             if current_monster.hp > 0:
                 print(f"{current_monster.name} överlever med {current_monster.hp} HP kvar.")
             else:
-                print(f"Du dödade {current_monster.name}, som droppar {current_monster.lvl} guld.")
+                #Räkna ut loot
+                gold_loot = int(current_monster.lvl / 2) ** 2 + 1
+                xp_loot = int((current_monster.lvl) ** 1.5) + 3
+                print(f"💀 Du dödade {current_monster.name}, som droppar \033[38;5;226m{int(current_monster.lvl/2)**2+1} guld\033[0m. 💀")
                 print(f"Du överlever med {player.hp} HP")
-                player.gold += current_monster.lvl
-                print(f"Du har nu {player.gold} guld.")
+                #Lägg till loot till spelaren
+                player.gold += gold_loot
+                player.gain_xp(xp_loot)
                 break
         elif svar == "nej":
             print(f"Du står över din tur. {current_monster.name} attackerar igen.")
@@ -324,3 +379,5 @@ def monster_attack(player, current_monster):
 
 
 monster_attack(player, current_monster)
+
+player_command()
