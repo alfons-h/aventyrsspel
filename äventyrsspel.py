@@ -32,17 +32,17 @@ class Player:
         print("     Spelar Stats     ")
         time.sleep(0.05)
         print("══════════════════════")
-        print(f"Player Name: {self.name}")
+        print(f"Spelarnamn: {self.name}")
         time.sleep(0.05)
-        print(f"Level: \033[38;5;213m{self.lvl}\033[0m")
+        print(f"\033[38;5;213mLevel:\033[0m {self.lvl}")
         time.sleep(0.05)
-        print(f"XP: \033[38;5;34m{self.xp}\033[0m")
+        print(f"\033[38;5;34mXP:\033[0m {self.xp}")
         time.sleep(0.05)
-        print(f"HP: \033[38;5;196m{self.hp}\033[0m")
+        print(f"\033[38;5;196mHP:\033[0m {self.hp}")
         time.sleep(0.05)
-        print(f"Armor: \033[38;5;153m{self.armor}\033[0m")
+        print(f"\033[38;5;153mArmor:\033[0m {self.armor}")
         time.sleep(0.05)
-        print(f"Guld: \033[38;5;226m{self.gold}\033[0m")
+        print(f"\033[38;5;226mGuld:\033[0m {self.gold}")
         print("══════════════════════")
 
     def gain_xp(player, amount):
@@ -118,20 +118,22 @@ class Monster:
         self.name = name
         self.hp = hp
         self.lvl = lvl
-        self.bild = img
+        self.img = img
         self.escape_threshold = 10
 
     def __str__(self):
-        return f"{self.name}: HP {self.hp}, Level {self.lvl}\n{self.bild}"
+        return f"{self.name}: HP {self.hp}, Level {self.lvl}\n{self.img}"
 
 
-rat_img = r"""                       ,     .
+rat_img = r"""
+                       ,     .
                        (\,;,/)
                         (o o)\//,
                          \ /     \,
                          `+'(  (   \    )
                             //  \   |_./
-                          '~' '~----'    """
+                          '~' '~----'    
+"""
 scorpion_img = r""" 
         ___ __
      _{___{__}\
@@ -143,7 +145,8 @@ scorpion_img = r"""
         `-:,_.:,_:,_:,.`\\._ ..'=- ,
             // // // //`-.`\`   .-'/
            << << << <<    \ `--'  /----)
-            ^  ^  ^  ^     `-.....--'''"""
+            ^  ^  ^  ^     `-.....--'''
+"""
 slime_img = r"""
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣶⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -157,7 +160,8 @@ slime_img = r"""
 ⠀⠀⣾⡿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣿⣿⣿⣿⣷⣄⠀⠀
 ⠀⢀⣼⡀⠀⠀⠈⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠿⣿⠃⠀
 ⠀⠘⠟⠁⠀⠀⠀⠀⢿⣿⣿⡿⠟⠋⠉⠉⠉⠙⢿⣿⣿⣿⡟⠁⠀⠀⢠⣿⡄⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⢿⣿⣿⡦⠀⠙⠻⠟⠁⠀⠀⠀⠈⠛⠃⠀"""
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⢿⣿⣿⡦⠀⠙⠻⠟⠁⠀⠀⠀⠈⠛⠃⠀
+"""
 goblin_img = r"""
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣶⣿⣿⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -171,7 +175,8 @@ goblin_img = r"""
 ⠀⠀⠀⠀⠀⠀⠀⠈⢻⣦⡀⠃⠀⣿⡆⢰⣿⠀⠘⢀⣴⡟⠁⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣦⡀⠘⠇⠸⠃⢀⣴⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣷⣄⣠⣾⣿⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⣿⣿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⣿⣿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
 zombie_img = r"""
 ⠀⠀⠀⠀⠀⠀⠀⠀⢀⡠⠖⠊⠉⠉⠉⠉⢉⠝⠉⠓⠦⣄⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⢀⡴⣋⠀⠀⣤⣒⡠⢀⠀⠐⠂⠀⠤⠤⠈⠓⢦⡀⠀⠀⠀⠀⠀
@@ -185,7 +190,8 @@ zombie_img = r"""
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⠀⠀⣸⣿⣿⣿⡿⣷⣿⣿⣷⠀⡇⠀⠀⠀⠙⠊⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣠⠀⢻⠛⠭⢏⣑⣛⣙⣛⠏⠀⡇⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡏⠠⠜⠓⠉⠉⠀⠐⢒⡒⡍⠐⡇⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠒⠢⠤⣀⣀⣀⣀⣘⠧⠤⠞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠒⠢⠤⣀⣀⣀⣀⣘⠧⠤⠞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
 ghost_img = r"""
             .--,
            /  (
@@ -202,8 +208,10 @@ ghost_img = r"""
      |`             |  _.'|
      |              `-'  /
      \                 .'
-      `.____________.-'"""
-vampire_img = r"""                  -.                       .-
+      `.____________.-'
+"""
+vampire_img = r"""
+                  -.                       .-
               _..-'(                       )`-.._
            ./'. '||\\.      _ _ /|       .//||` .`\.
         ./'.|'.'||||\\|..   \'o.O' /  ..|//||||`.`|.`\.
@@ -214,7 +222,8 @@ vampire_img = r"""                  -.                       .-
 '.||| ||||||||| |/'   ``\||``     ''||/''   `\| ||||||||| |||.`
 |/' \./'     `\./         \!|\   /|!/         \./'     `\./ `\|
 V    V         V          }' `\ /' `{          V         V    V
-`    `         `               V               '         '    '"""
+`    `         `               V               '         '    '
+"""
 werewolf_img = r"""
                       .-+--:%%=:-.       
                 -#%%*%@@@@@%%@@@@@#.     
@@ -232,7 +241,8 @@ werewolf_img = r"""
     #@+ .#@@#.      .#@:                 
   .#@@-              %@%:..              
   .%%*#.             .#%%+=              
-    ..                 ..   """
+    ..                 ..   
+"""
 dragon_img = r"""
                                                             @      @                                
                                                @@            @@@@@@       @@                           
@@ -299,20 +309,76 @@ class Armor:
     def str(self):
         return f"{self.name}: armor{self.arm}"
 
-Sword = [
-    Sword("Ghost Reaver", 8),
-    Sword("Night's Edge", 12),
-    Sword("Mercy Sword", 15),
-    Sword("Hell's Scream", 35),
-    Sword("Bloodlord's Rapier", 60),
+class Sword:
+    def __init__(self, name, damage):
+        self.name = name
+        self.dmg = damage
+
+    def __str__(self):
+        return f"{self.name}: Damage {self.dmg}"
+
+
+class Armor:
+    def __init__(self, name, defense):
+        self.name = name
+        self.defense = defense
+
+    def __str__(self):
+        return f"{self.name}: Defense {self.defense}"
+
+
+class Helmet(Armor):
+    def __init__(self, name, defense):
+        super().__init__(name, defense)
+
+
+class ChestArmor(Armor):
+    def __init__(self, name, defense):
+        super().__init__(name, defense)
+
+
+class LegArmor(Armor):
+    def __init__(self, name, defense):
+        super().__init__(name, defense)
+
+
+
+swords = [
+    Sword("Träsvärd", 1),
+    Sword("Stensvärd", 2),
+    Sword("Rostigt Järnsvärd", 4), 
+    Sword("Järnsvärd", 7),
+    Sword("Finslipat Järnsvärd", 12),
+    Sword("Silversvärd", 15),
+    Sword("Helvetets Skrik", 35),
+    Sword("Blodherrens Rappir", 60),
 ]
 
-Armor = [
-    Armor("Lether armor", 10),
-    Armor("Silver armor", 13),
-    Armor("Gold armor", 16),
-    Armor("Storm armor", 25),
-    Armor("Demon armor", 34),
+
+helmets = [
+    Helmet("Järnhjälm", 5),
+    Helmet("Silverhjälm", 10),
+    Helmet("Gyllene Hjälm", 15),
+    Helmet("Stormhjälm", 20),
+    Helmet("Demonhjälm", 30),
+]
+
+
+chest_armors = [
+    ChestArmor("Järnbröstplåt", 10),
+    ChestArmor("Silverbröstplåt", 15),
+    ChestArmor("Gyllene Bröstplåt", 20),
+    ChestArmor("Stormbröstplåt", 30),
+    ChestArmor("Demonbröstplåt", 40),
+]
+
+
+leg_armors = [
+    LegArmor("Järnbenskydd", 8),
+    LegArmor("Silverbenskydd", 12),
+    LegArmor("Gyllene Benskydd", 18),
+    LegArmor("Stormbenskydd", 25),
+    LegArmor("Demonbenskydd", 35),
 ]
 
 
@@ -361,6 +427,7 @@ def monster_attack(player, current_monster):
 
         if player.hp > 0:
             print(f"Du överlever med {player.hp} HP kvar.")
+            time.sleep(0.2)
         else:
             print("""
 
@@ -403,11 +470,12 @@ def monster_attack(player, current_monster):
             
             if current_monster.hp > 0:
                 print(f"{current_monster.name} överlever med {current_monster.hp} HP kvar.")
+                time.sleep(0.3)
             else:
                 #Räknar ut loot
                 gold_loot = int(current_monster.lvl // 2) ** 2 + 1
                 xp_loot = int((current_monster.lvl) ** 1.5) + 3
-                print(f"💀 Du dödade {current_monster.name}, som droppar \033[38;5;226m{int(current_monster.lvl/2)**2+1} guld\033[0m. 💀")
+                print(f"💀 Du dödade {current_monster.name}, som droppar \033[38;5;226m{int(current_monster.lvl/2)**2+1} guld\033[0m.")
                 print(f"Du överlever med {player.hp} HP")
                 #Lägger till loot till spelaren
                 player.gold += gold_loot
@@ -417,11 +485,13 @@ def monster_attack(player, current_monster):
             # Försök att fly
             dice_roll = random.randint(1, 18) - ((current_monster.lvl) // 2) + player.lvl
             print(f"Du försöker fly från {current_monster.name}...")
+            time.sleep(0.5)
             if dice_roll > current_monster.escape_threshold:
                 print(f"Du lyckades fly från {current_monster.name}!")
                 break
             else:
                 print(f"Du misslyckades att fly från {current_monster.name}.")
+                time.sleep(0.4)
         else:
             print("Ogiltigt svar, monstret attackerar.")
 
