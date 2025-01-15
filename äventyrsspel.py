@@ -533,7 +533,7 @@ def monster_attack(player, current_monster):
 2. Fly
 """).strip().lower()
         if svar == "1" or svar == "attackera" or svar == "attack":
-            damage = random.randint(3, 4) * player.lvl * 30
+            damage = random.randint(3, 4) * player.lvl * 3
             print(f"Du attackerar {current_monster.name} och gör {damage} skada!")
             time.sleep(1)
             current_monster.hp = max(0, current_monster.hp - damage)
