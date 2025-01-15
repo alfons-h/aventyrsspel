@@ -54,6 +54,7 @@ class Player:
         xp_needed = 100 + 0.8 * (self.lvl ** 2)
         while self.xp >= xp_needed:
             self.xp -= xp_needed
+            self.xp = round(self.xp)
             self.lvl += 1
             xp_needed = 100 + 0.8 * (self.lvl ** 2)
             print(f"\033[38;5;213mGrattis {self.name}, du har nått Level {self.lvl}!\033[0m")
@@ -384,6 +385,7 @@ def choose_door():
             #Skapa nytt monster
             global current_monster
             current_monster = get_custom_monster(name, monsters)
+            print(current_monster)
             print(f"Du stöter på level {current_monster.lvl} {current_monster.name}.")
             print(f"{current_monster.name} har {current_monster.hp} HP.")
             time.sleep(2)
@@ -432,17 +434,82 @@ death_screen = """                                                              
 
 def get_loot(current_monster):
     loot_chance = random.randint(1, 100)
+    item = None
+
+    if current_monster.name == "Råtta":
+        item = None 
+
+    elif current_monster.name == "Skorpion":
+        if loot_chance <= 10:  
+            item = random.choice(["Träsvärd"])
+
+    elif current_monster.name == "Slime":
+        if loot_chance <= 20:  
+            item = "Träsvärd"
+        elif loot_chance <= 30:  
+            item = "Stensvärd"
+        elif loot_chance <= 35:  
+            item = "Rostigt järnsvärd"
+        elif loot_chance <= 5:  
+            item = random.choice(["Järnhjälm", "Järnbröstplåt", "Järnbenskydd"])
+
+    elif current_monster.name == "Goblin":
+        if loot_chance <= 30:  
+            item = "Träsvärd"
+        elif loot_chance <= 60:  
+            item = "Stensvärd"
+        elif loot_chance <= 70:  
+            item = "Rostigt järnsvärd"
+        elif loot_chance <= 10:  
+            item = random.choice(["Järnhjälm", "Järnbröstplåt", "Järnbenskydd"])
+
+    elif current_monster.name == "Zombie":
+        if loot_chance <= 20:  
+            item = "Rostigt järnsvärd"
+        elif loot_chance <= 60:  
+            item = "Järnsvärd"
+        elif loot_chance <= 70:  
+            item = "Finslipat järnsvärd"
+        elif loot_chance <= 15:  
+            item = random.choice(["Järnhjälm", "Järnbröstplåt", "Järnbenskydd"])
+
+    elif current_monster.name == "Spöke":
+        if loot_chance <= 30:  
+            item = "Järnsvärd"
+        elif loot_chance <= 70:  
+            item = "Finslipat järnsvärd"
+        elif loot_chance <= 80:  
+            item = "Silversvärd"
+        elif loot_chance <= 10:  
+            item = random.choice(["Järnhjälm", "Järnbröstplåt", "Järnbenskydd", "Silverhjälm", "Silverbröstplåt", "Silverbenskydd"])
+
+    elif current_monster.name == "Vampyr":
+        if loot_chance <= 50:  
+            item = "Silversvärd"
+        elif loot_chance <= 55:  
+            item = "Helvetets skrik"
+        elif loot_chance <= 20:  
+            item = random.choice(["Silverhjälm", "Silverbröstplåt", "Silverbenskydd", "Gyllene Hjälm", "Gyllene Bröstplåt", "Gyllene Benskydd"])
+
+    elif current_monster.name == "Varulv":
+        if loot_chance <= 70:  
+            item = "Helvetets skrik"
+        elif loot_chance <= 80:  
+            item = "Blodherrens rapir"
+        elif loot_chance <= 15:  
+            item = random.choice(["Gyllene Hjälm", "Gyllene Bröstplåt", "Gyllene Benskydd", "Stormhjälm", "Stormbröstplåt", "Stormbenskydd"])
+
+    elif current_monster.name == "Drake":
+        if loot_chance <= 50:  
+            item = "Blodherrens rapir"
+        else:  
+            item = "Excalibur"
+        if loot_chance <= 70:  
+            item = random.choice(["Demonhjälm", "Demonbröstplåt", "Demonbenskydd"])
+
+    return item
 
 
-    if loot_chance <= 70:
-        if current_monster.lvl < 5:
-            item = random.choice(swords[:3])
-        elif current_monster.lvl < 10:
-            item = random.choice(swords[3:5] + helmets[:2])
-        else:
-            item = random.choice(swords[5:] + helmets[2:] + chest_armors[:3])
-        return item
-    return None
 
 
 def monster_attack(player, current_monster):
@@ -466,7 +533,7 @@ def monster_attack(player, current_monster):
 2. Fly
 """).strip().lower()
         if svar == "1" or svar == "attackera" or svar == "attack":
-            damage = random.randint(3, 4) * player.lvl * 3
+            damage = random.randint(3, 4) * player.lvl * 30
             print(f"Du attackerar {current_monster.name} och gör {damage} skada!")
             time.sleep(1)
             current_monster.hp = max(0, current_monster.hp - damage)
