@@ -18,11 +18,11 @@ class Player:
               """)
         print("Välkommen " + self.name + " till grottkravlare.")
         print("Du vaknar i mörkret, omgiven av kalla stenväggar.")
-        time.sleep(1)
+        time.sleep(0.5)
         print("Framför dig ser du tre massiva dörrar, var och en med märkliga symboler inristade.")
-        time.sleep(2)
+        time.sleep(1)
         print("Minnet är blankt, men något säger dig att valet du gör här kommer forma ditt öde.")
-        time.sleep(2)
+        time.sleep(1)
         self.showstats()
         
     def showstats(self):
@@ -71,20 +71,57 @@ Vad vill du göra?
 1. Gå vidare (fortsätt)
 2. Visa stats (stats)
 3. Visa inventory (inventory)
+4. Hantera föremål i inventoriet (föremål)
 """).strip().lower()
         if command in ["fortsätt", "1"]:
             choose_door()
-            break  #Tillbaks till spel-loopen
+            break  # Tillbaks till spel-loopen
         elif command in ["stats", "2"]:
             player.showstats()
         elif command in ["inventory", "3"]:
             player_inventory.show_inventory()
+        elif command in ["föremål", "4"]:
+            print("\nDitt inventory:")
+            items = list(player_inventory.items.keys())
+            index = 1
+            for item in items:
+                print(f"{index}. {item}")
+                index += 1
+
+            choice = input("\nVälj ett föremål med dess nummer: ").strip()
+            if choice.isdigit():
+                choice = int(choice) - 1
+                if 0 <= choice < len(items):
+                    item_name = items[choice]
+                    action = input(f"Vill du 1. Equippa eller 2. Slänga {item_name}?").strip().lower()
+                    if action in ["1", "equip", "equippa", "e"]:
+                        print()
+                        print(f"Försöker equippa {item_name}...")
+                        item = player_inventory.items[item_name]  # Hämta objekt från inventory
+                        player_inventory.equip_item(item)
+
+                    elif action in ["2", "släng", "slänga", "s"]:
+                        print(f"Slänger {item_name}...")
+                        player_inventory.remove_item(item_name)
+                    else:
+                        print("Ogiltigt val.")
+                else:
+                    print("Ogiltigt val.")
+            else:
+                print("Ange ett giltigt nummer.")
         else:
             print("Ogiltigt kommando. Försök igen.")
+
+
 
 class Inventory:
     def __init__(self):
         self.items = {}  
+        self.equipped_armor = {
+            "helmet": None,
+            "chest": None,
+            "legs": None
+        }
         
     def add_item(self, item_name, quantity=1):
         if item_name in self.items:
@@ -114,6 +151,35 @@ class Inventory:
             for item, quantity in self.items.items():
                 print(f"- {item}: {quantity}x")
 
+    def equip_item(self, item):
+        if hasattr(item, 'defense'): #kollar om den har defense stat för att veta om det är en armordel
+            slot = None
+            if "hjälm" in item.name.lower():
+                slot = "helmet"
+            elif "bröstplåt" in item.name.lower():
+                slot = "chest"
+            elif "benskydd" in item.name.lower():
+                slot = "legs"
+
+            if not slot:
+                print(f"{item.name} är inte en rustning och kan inte equippas.")
+                return
+
+            if self.equipped_armor[slot]:
+                print(f"{self.equipped_armor[slot].name} togs av och ersattes med {item.name}.")
+            else:
+                print(f"{item.name} equippades.")
+
+            self.equipped_armor[slot] = item
+
+            if item.name in self.items:
+                self.remove_item(item.name)
+            else:
+                print(f"{item.name} finns inte i ditt inventory.")
+        else:
+            print(f"{item.name} är inte ett giltigt föremål för utrustning.")
+
+
 player_inventory = Inventory()
 
 class Monster:
@@ -126,6 +192,7 @@ class Monster:
 
     def __str__(self):
         return f"{self.name}: HP {self.hp}, Level {self.lvl}\n{self.img}"
+
 
 
 rat_img = r"""
@@ -347,7 +414,7 @@ helmets = [
     Helmet("Silverhjälm", 10),
     Helmet("Gyllene Hjälm", 15),
     Helmet("Stormhjälm", 20),
-    Helmet("Demonhjälm", 30),
+    Helmet("Drakhjälm", 30),
 ]
 
 
@@ -356,7 +423,7 @@ chest_armors = [
     ChestArmor("Silverbröstplåt", 15),
     ChestArmor("Gyllene Bröstplåt", 20),
     ChestArmor("Stormbröstplåt", 30),
-    ChestArmor("Demonbröstplåt", 40),
+    ChestArmor("Drakbröstplåt", 40),
 ]
 
 
@@ -365,7 +432,7 @@ leg_armors = [
     LegArmor("Silverbenskydd", 12),
     LegArmor("Gyllene Benskydd", 18),
     LegArmor("Stormbenskydd", 25),
-    LegArmor("Demonbenskydd", 35),
+    LegArmor("Drakbenskydd", 35),
 ]
 
 
@@ -432,83 +499,74 @@ death_screen = """                                                              
                                                                                                                                                                                                         [0m
 """
 
+
 def get_loot(current_monster):
     loot_chance = random.randint(1, 100)
     item = None
 
+    # Definiera en loot-tabell för varje monster
+    loot_tables = {
+        "Råtta": {
+            "common": None,  # Ingen loot
+        },
+        "Skorpion": {
+            "common": ["Träsvärd", "Läderhjälm", "Läderbröstplåt", "Läderbenskydd"],
+            "chance": [10],  # 10%
+        },
+        "Slime": {
+            "common": ["Träsvärd", "Läderhjälm"],
+            "uncommon": ["Stensvärd", "Läderbröstplåt"],
+            "rare": ["Rostigt järnsvärd", "Läderbenskydd"],
+            "chance": [20, 30, 40],  # 20% common, 10% uncommon, 10% rare
+        },
+        "Goblin": {
+            "common": ["Träsvärd", "Läderhjälm"],
+            "uncommon": ["Stensvärd", "Läderbröstplåt"],
+            "rare": ["Rostigt järnsvärd", "Läderbenskydd"],
+            "chance": [30, 60, 75],  # 30%, 30%, 15%
+        },
+        "Zombie": {
+            "common": ["Rostigt järnsvärd", "Järnhjälm"],
+            "uncommon": ["Järnsvärd", "Järnbröstplåt"],
+            "rare": ["Finslipat järnsvärd", "Järnbenskydd"],
+            "chance": [20, 60, 75],  # 20%, 40%, 15%
+        },
+        "Spöke": {
+            "common": ["Järnsvärd", "Järnhjälm"],
+            "uncommon": ["Finslipat järnsvärd", "Järnbröstplåt"],
+            "rare": ["Silversvärd", "Järnbenskydd"],
+            "chance": [30, 70, 85],  # 30%, 40%, 15%
+        },
+        "Vampyr": {
+            "common": ["Silversvärd", "Silverhjälm"],
+            "uncommon": ["Helvetets skrik", "Silverbröstplåt"],
+            "rare": ["Gyllene Hjälm", "Gyllene Bröstplåt"],
+            "chance": [40, 55, 70],  # 40%, 15%, 15%
+        },
+        "Varulv": {
+            "common": ["Helvetets skrik", "Stormhjälm"],
+            "rare": ["Blodherrens rapir", "Stormbröstplåt"],
+            "chance": [70, 80],  # 70%, 10%
+        },
+        "Drake": {
+            "common": ["Blodherrens rapir", "Drakhjälm"],
+            "rare": ["Excalibur", "Drakbröstplåt", "Drakbenskydd"],
+            "chance": [50, 100],  # 50%, 50%
+        },
+    }
+
+    loot_table = loot_tables.get(current_monster.name)
+
     if current_monster.name == "Råtta":
-        item = None 
+        return None
 
-    elif current_monster.name == "Skorpion":
-        if loot_chance <= 10:  
-            item = random.choice(["Träsvärd"])
-
-    elif current_monster.name == "Slime":
-        if loot_chance <= 20:  
-            item = "Träsvärd"
-        elif loot_chance <= 30:  
-            item = "Stensvärd"
-        elif loot_chance <= 35:  
-            item = "Rostigt järnsvärd"
-        elif loot_chance <= 5:  
-            item = random.choice(["Järnhjälm", "Järnbröstplåt", "Järnbenskydd"])
-
-    elif current_monster.name == "Goblin":
-        if loot_chance <= 30:  
-            item = "Träsvärd"
-        elif loot_chance <= 60:  
-            item = "Stensvärd"
-        elif loot_chance <= 70:  
-            item = "Rostigt järnsvärd"
-        elif loot_chance <= 10:  
-            item = random.choice(["Järnhjälm", "Järnbröstplåt", "Järnbenskydd"])
-
-    elif current_monster.name == "Zombie":
-        if loot_chance <= 20:  
-            item = "Rostigt järnsvärd"
-        elif loot_chance <= 60:  
-            item = "Järnsvärd"
-        elif loot_chance <= 70:  
-            item = "Finslipat järnsvärd"
-        elif loot_chance <= 15:  
-            item = random.choice(["Järnhjälm", "Järnbröstplåt", "Järnbenskydd"])
-
-    elif current_monster.name == "Spöke":
-        if loot_chance <= 30:  
-            item = "Järnsvärd"
-        elif loot_chance <= 70:  
-            item = "Finslipat järnsvärd"
-        elif loot_chance <= 80:  
-            item = "Silversvärd"
-        elif loot_chance <= 10:  
-            item = random.choice(["Järnhjälm", "Järnbröstplåt", "Järnbenskydd", "Silverhjälm", "Silverbröstplåt", "Silverbenskydd"])
-
-    elif current_monster.name == "Vampyr":
-        if loot_chance <= 50:  
-            item = "Silversvärd"
-        elif loot_chance <= 55:  
-            item = "Helvetets skrik"
-        elif loot_chance <= 20:  
-            item = random.choice(["Silverhjälm", "Silverbröstplåt", "Silverbenskydd", "Gyllene Hjälm", "Gyllene Bröstplåt", "Gyllene Benskydd"])
-
-    elif current_monster.name == "Varulv":
-        if loot_chance <= 70:  
-            item = "Helvetets skrik"
-        elif loot_chance <= 80:  
-            item = "Blodherrens rapir"
-        elif loot_chance <= 15:  
-            item = random.choice(["Gyllene Hjälm", "Gyllene Bröstplåt", "Gyllene Benskydd", "Stormhjälm", "Stormbröstplåt", "Stormbenskydd"])
-
-    elif current_monster.name == "Drake":
-        if loot_chance <= 50:  
-            item = "Blodherrens rapir"
-        else:  
-            item = "Excalibur"
-        if loot_chance <= 70:  
-            item = random.choice(["Demonhjälm", "Demonbröstplåt", "Demonbenskydd"])
+    for category, chance_limit in zip(["common", "uncommon", "rare"], loot_table.get("chance", [])):
+        if loot_chance <= chance_limit:
+            if loot_table.get(category):
+                item = random.choice(loot_table[category])
+            break
 
     return item
-
 
 
 
@@ -533,7 +591,7 @@ def monster_attack(player, current_monster):
 2. Fly
 """).strip().lower()
         if svar == "1" or svar == "attackera" or svar == "attack":
-            damage = random.randint(3, 4) * player.lvl * 3
+            damage = random.randint(3, 4) * player.lvl * 20
             print(f"Du attackerar {current_monster.name} och gör {damage} skada!")
             time.sleep(1)
             current_monster.hp = max(0, current_monster.hp - damage)
