@@ -6,12 +6,13 @@ name = input("Vad heter du?--> ")
 
 class Player:
     def __init__(self, name, lvl, xp, hp, armor, gold):
-        self.name = name.capitalize()
+        self.name = name.capitalize()       #namnet får automatiskt stor bokstav
         self.hp = hp
         self.lvl = lvl
         self.xp = xp
         self.armor = armor
         self.gold = gold
+                
         
         print("""
               
@@ -23,9 +24,9 @@ class Player:
         time.sleep(1)
         print("Minnet är blankt, men något säger dig att valet du gör här kommer forma ditt öde.")
         time.sleep(1)
-        self.showstats()
+        self.showstats()                    #
         
-    def showstats(self):
+    def showstats(self):        #Funktion för att visa stats
         time.sleep(0.1)
         print()
         time.sleep(0.05)
@@ -46,24 +47,32 @@ class Player:
         print("══════════════════════")
 
     def gain_xp(player, amount):
-        player.xp += amount
+        player.xp += amount             #Lägger till XP till spelaren
         print(f"\033[38;5;34mDu har fått {amount} XP!\033[0m")
-        player.check_level_up()
+        player.check_level_up()         #Kollar om man ska levla upp
 
-    def check_level_up(self):
-        xp_needed = 100 + 0.8 * (self.lvl ** 2)
-        while self.xp >= xp_needed:
-            self.xp -= xp_needed
-            self.xp = round(self.xp)
-            self.lvl += 1
+    def check_level_up(self):           #Kollar om man ska levla upp
+        xp_needed = 100 + 0.8 * (self.lvl ** 2)     #Det krävs 100 XP + 0.8(level)^2 där
+        while self.xp >= xp_needed:                 #Loop som kollar om man har nog med XP för att levla upp
+            self.xp -= xp_needed                        #Om man levlar upp så tar den bort allt xp man behöver för den nya leveln
+            self.xp = round(self.xp)                    #Nya XPn rundas till heltals
+            self.lvl += 1                               #Man går upp en level
             xp_needed = 100 + 0.8 * (self.lvl ** 2)
             print(f"\033[38;5;213mGrattis {self.name}, du har nått Level {self.lvl}!\033[0m")
         self.showstats()
         
-        
-player = Player(name, 1, 0, 100, 0, 5)
+    def update_armor(self, equipped_armor):             #Funktion för att lägga till armor stats när man tar på sig armor
+        total_defense = 0                               #Man börjar med 0 Defense
+        for slot, item in equipped_armor.items():       #Loop som kollar efter rustningsdelar
+            if item is not None:                        
+                total_defense += item.defense           #Lägger till armor stats
+        self.armor = total_defense
 
-def player_command():
+        
+        
+player = Player(name, 1, 0, 100, 0, 5)                  #Spelares namn, lvl, xp, hp, armor, guld
+
+def player_command():                                   #Menyn som öppnas när man dödat ett monster eller flytt där man väljer vad man vill göra
     while True:
         command = input(
 """
@@ -72,43 +81,53 @@ Vad vill du göra?
 2. Visa stats (stats)
 3. Visa inventory (inventory)
 4. Hantera föremål i inventoriet (föremål)
+5. Visa equippade föremål 
 """).strip().lower()
-        if command in ["fortsätt", "1"]:
+        if command in ["fortsätt", "1"]:                #Första valet, gå vidare genom att öppna en ny dörr
             choose_door()
-            break  # Tillbaks till spel-loopen
-        elif command in ["stats", "2"]:
+            break                                       # Tillbaks till spel-loopen
+        elif command in ["stats", "2"]:                 #Andra valet, visa spelarens stats
             player.showstats()
-        elif command in ["inventory", "3"]:
+        elif command in ["inventory", "3"]:             #Tredje valet, visa inventoryt
             player_inventory.show_inventory()
-        elif command in ["föremål", "4"]:
+        elif command in ["hantera", "4"]:               #Fjärde valet, ta på sig rustning och svärd
+        
             print("\nDitt inventory:")
-            items = list(player_inventory.items.keys())
-            index = 1
-            for item in items:
+            items = list(player_inventory.items.keys()) #Skapar en lista av namnen på allt i inventoryt
+            index = 1                                   #Gör så att listan börjar på 1
+            for item in items:                  #Loop som skriver ut en lista av alla föremål i spelarens inventory
                 print(f"{index}. {item}")
                 index += 1
 
-            choice = input("\nVälj ett föremål med dess nummer: ").strip()
-            if choice.isdigit():
-                choice = int(choice) - 1
-                if 0 <= choice < len(items):
-                    item_name = items[choice]
+            choice = input("\nVälj ett föremål med dess nummer: ").strip()      #Här väljer man vilket föremål man vill använda
+            if choice.isdigit():                                                #Ser till så att man skrev en siffra
+                choice = int(choice) - 1                                        #Konvertera till nollbaserat index eftersom pythonlistor börjar på 0
+                if 0 <= choice < len(items):                                    #Ser till så att numret som spelaren skriver inte är mindre (negativ) eller mer än listan
+                    item_name = items[choice]                                   
                     action = input(f"Vill du 1. Equippa eller 2. Slänga {item_name}?").strip().lower()
                     if action in ["1", "equip", "equippa", "e"]:
                         print()
                         print(f"Försöker equippa {item_name}...")
-                        item = player_inventory.items[item_name]  # Hämta objekt från inventory
-                        player_inventory.equip_item(item)
+                        item = player_inventory.items[item_name]                #Kopplar föremålet man väljer till inventoryt 
+                        player_inventory.equip_item(item_name)                  #Startar equip-funktionen för det föremålet man valt
 
                     elif action in ["2", "släng", "slänga", "s"]:
                         print(f"Slänger {item_name}...")
-                        player_inventory.remove_item(item_name)
+                        player_inventory.remove_item(item_name)                 #Man kan också välja att göra sig av med föremålet
                     else:
                         print("Ogiltigt val.")
                 else:
                     print("Ogiltigt val.")
             else:
                 print("Ange ett giltigt nummer.")
+        elif command in ["5"]:                                                  #Femte valet, visa alla rustningsdelar som spelaren har tagit på sig
+            print("Equippade föremål:")
+            for slot, item in player_inventory.equipped_armor.items():          #Loop som skriver ut alla rustnings-slots och vad som finns i dem
+                if item:
+                    print(f"{slot.capitalize()}: {item.name}, ({item.defense} försvar)")        #Skriver ut rustningsdel och hur mycket armor stats den har
+                else:
+                    print(f"{slot.capitalize()}: Ingen")                                        #Om man inte har något i en rustnings-slot så skriver den det.
+     
         else:
             print("Ogiltigt kommando. Försök igen.")
 
@@ -116,53 +135,60 @@ Vad vill du göra?
 
 class Inventory:
     def __init__(self):
-        self.items = {}  
-        self.equipped_armor = {
+        self.items = {}  #Lagra föremål i ett dictionary
+        self.equipped_armor = {     #Lagra armorn som är på kroppen i ett dictionary
             "helmet": None,
             "chest": None,
-            "legs": None
+            "legs": None,
         }
         
-    def add_item(self, item_name, quantity=1):
-        if item_name in self.items:
-            self.items[item_name] += quantity
+    def add_item(self, item, quantity=1):       #Funktion för att lägga till föremål i inventoryt
+        if item.name in self.items:                         #Om föremålet redan finns i inventoryt så ökar dess kvantitet med 1 istället för att läggas till igen som ett nytt föremål
+            self.items[item.name]['quantity'] += quantity 
         else:
-            self.items[item_name] = quantity
-        print(f"Lade till {quantity} {item_name} till inventariet")
+            self.items[item.name] = {'item': item, 'quantity': quantity}        #Dictionary för föremål i inventoryt
+        print(f"Lade till {quantity} {item.name} till inventariet.")
 
-    def remove_item(self, item_name, quantity=1):
-        if item_name in self.items:
-            if self.items[item_name] > quantity:
-                self.items[item_name] -= quantity
-                print(f"{quantity} {item_name} togs bort")
-            elif self.items[item_name] == quantity:
-                del self.items[item_name]
-                print(f"{quantity} {item_name} togs bort och finns inte längre i inventariet")
+    def remove_item(self, item_name, quantity=1):   #Funktion för att ta bort föremål från inventoryt
+        if item_name in self.items:         #Kollar om föremålet finns så att man kan ta bort det
+            if self.items[item_name]['quantity'] > quantity:        #Kollar så att det finns fler föremål än vad man vill ta borts
+                self.items[item_name]['quantity'] -= quantity       #Minskar kvantiteten av föremålet i inventoryt med värdet "quantity"
+                print(f"{quantity} {item_name} togs bort.")         
+            elif self.items[item_name]['quantity'] == quantity:     #Om antalet föremål i inventoryt i listan är lika stort som man vill ta bort så raderas den istället för att kvantiteten minskas
+                del self.items[item_name]                           #Raderar föremålet
+                print(f"{quantity} {item_name} togs bort och finns inte längre i inventariet.")
             else:
-                print(f"För få {item_name} för att ta bort. Bara {self.items[item_name]} är tillgängliga.")
+                print(f"För få {item_name} för att ta bort. Bara {self.items[item_name]['quantity']} är tillgängliga.")     #Om man vill ta bort fler föremål än vad som finns så säger den till
         else:
-            print(f"{item_name} hittades inte")
+            print(f"{item_name} hittades inte i inventariet.") #Ifall föremålet inte finns så säger den till
 
-    def show_inventory(self):
-        if not self.items:
+    def show_inventory(self):                                   #Funktion för att visa inventoryt inom player_command
+        if not self.items:                                      #Om self.items (inventoryt) inte finns så säger den det
             print("Ditt inventory är tomt.")
         else:
-            print("\nDitt inventory innehåller:")
-            for item, quantity in self.items.items():
-                print(f"- {item}: {quantity}x")
+            print("\nDitt inventory innehåller:")               
+            for item_name, data in self.items.items():          #Loop som går igenom alla items i self.items. "Data" används för att koppla till kvantiteten
+                print(f"- {item_name}: {data['quantity']}x")    #Printar alla items och deras kvantitet
 
-    def equip_item(self, item):
-        if hasattr(item, 'defense'): #kollar om den har defense stat för att veta om det är en armordel
-            slot = None
-            if "hjälm" in item.name.lower():
-                slot = "helmet"
-            elif "bröstplåt" in item.name.lower():
-                slot = "chest"
-            elif "benskydd" in item.name.lower():
+    def equip_item(self, item_name):            #Funktion för att ta på sig armor-delar
+        if item_name not in self.items:         #Om ett föremål man försöker equippa inte finns så kan man inte equippa den
+            print(f"{item_name} finns inte i ditt inventory.")
+            return                              #Avsluta equip_item och återvänd till player_command
+
+
+        item = self.items[item_name]['item']        #Hämta föremålet
+
+        if hasattr(item, 'defense'):         #Kontrollera om det är rustning genom att kolla om det är ett item och leta efter 'defense'
+            slot = None                                     
+            if "hjälm" in item.name.lower():                #Om föremålet har "hjälm" i namnet så är det en hjälm och kan sättas på huvudet  
+                slot = "helmet"                             
+            elif "bröstplåt" in item.name.lower():          #Om föremålet har "bröstplåt" i namnet så är det en bröstplåt och kan sättas på bröstet
+                slot = "chest"                              
+            elif "benskydd" in item.name.lower():           #Om föremålet har "benskydd" i namnet så är det ett par benskydd och kan sättas på benen
                 slot = "legs"
 
-            if not slot:
-                print(f"{item.name} är inte en rustning och kan inte equippas.")
+            if not slot:                                                                    #Om föremålet inte hör till en armorslot kan man inte equippa den
+                print(f"{item.name} är inte en giltig rustning och kan inte equippas.")
                 return
 
             if self.equipped_armor[slot]:
@@ -170,14 +196,12 @@ class Inventory:
             else:
                 print(f"{item.name} equippades.")
 
-            self.equipped_armor[slot] = item
-
-            if item.name in self.items:
-                self.remove_item(item.name)
-            else:
-                print(f"{item.name} finns inte i ditt inventory.")
+            self.equipped_armor[slot] = item                    #Armor equippas
+            self.remove_item(item_name)                         #Armor tas bort från spelarens inventory eftersom den hamnar i armor slotten
+            player.update_armor(self.equipped_armor)            #Efter att man tar på sig rustningen uppdateras spelarens armor-stat
         else:
-            print(f"{item.name} är inte ett giltigt föremål för utrustning.")
+            print(f"{item_name} är inte ett giltigt föremål för utrustning.")
+
 
 
 player_inventory = Inventory()
@@ -187,7 +211,7 @@ class Monster:
         self.name = name
         self.hp = hp
         self.lvl = lvl
-        self.img = img
+        self.img = img                  #Monstrena har bilder utav ASCII-konst
         self.escape_threshold = 6
 
     def __str__(self):
@@ -196,13 +220,13 @@ class Monster:
 
 
 rat_img = r"""
-                       ,     .
-                       (\,;,/)
-                        (o o)\//,
-                         \ /     \,
-                         `+'(  (   \    )
-                            //  \   |_./
-                          '~' '~----'    
+           ,     .
+           (\,;,/)
+            (o o)\//,
+             \ /     \,
+             `+'(  (   \    )
+                //  \   |_./
+              '~' '~----'    
 """
 scorpion_img = r""" 
         ___ __
@@ -364,14 +388,14 @@ monsters = [
 
 class Sword:
     def __init__(self, name, damage):
-        self.name = name
-        self.dmg = damage
+        self.name = name                    #Svärdets namn
+        self.dmg = damage                   #Svärdets skada
 
     def __str__(self):
         return f"{self.name}: Damage {self.dmg}"
 
 
-class Armor:
+class Armor:                                #Alla individuella armordelar ingår i class Armor
     def __init__(self, name, defense):
         self.name = name
         self.defense = defense
@@ -455,7 +479,7 @@ def choose_door():
             print(current_monster)
             print(f"Du stöter på level {current_monster.lvl} {current_monster.name}.")
             print(f"{current_monster.name} har {current_monster.hp} HP.")
-            time.sleep(2)
+            time.sleep(1)
 
             #Tillbaks till spel-loopen
             break
@@ -533,8 +557,8 @@ def get_loot(current_monster):
         },
         "Spöke": {
             "common": ["Järnsvärd", "Järnhjälm"],
-            "uncommon": ["Finslipat järnsvärd", "Järnbröstplåt"],
-            "rare": ["Silversvärd", "Järnbenskydd"],
+            "uncommon": ["Järnbenskydd", "Järnbröstplåt"],
+            "rare": ["Silversvärd", "Finslipat Järnsvärd"],
             "chance": [30, 70, 85],  # 30%, 40%, 15%
         },
         "Vampyr": {
@@ -556,24 +580,32 @@ def get_loot(current_monster):
     }
 
     loot_table = loot_tables.get(current_monster.name)
+    
+    if loot_table:
+            for category, chance_limit in zip(["common", "uncommon", "rare"], loot_table.get("chance", [])):
+                if loot_chance <= chance_limit:
+                    if loot_table.get(category):
+                        item_name = random.choice(loot_table[category])
 
-    if current_monster.name == "Råtta":
-        return None
+                        # Skapa rätt typ av objekt baserat på namnet
+                        if "svärd" in item_name.lower():
+                            item = Sword(item_name, random.randint(5, 15))  # Exempel: skapa ett svärd
+                        elif "hjälm" in item_name.lower():
+                            item = Helmet(item_name, random.randint(3, 8))  # Exempel: skapa en hjälm
+                        elif "bröstplåt" in item_name.lower():
+                            item = ChestArmor(item_name, random.randint(5, 12))  # Exempel: skapa bröstplåt
+                        elif "benskydd" in item_name.lower():
+                            item = LegArmor(item_name, random.randint(4, 10))  
+                    break
 
-    for category, chance_limit in zip(["common", "uncommon", "rare"], loot_table.get("chance", [])):
-        if loot_chance <= chance_limit:
-            if loot_table.get(category):
-                item = random.choice(loot_table[category])
-            break
-
-    return item
+    return item 
 
 
 
 def monster_attack(player, current_monster):
     while current_monster.hp > 0 and player.hp > 0:
         # Monstrets attack
-        damage = random.randint(2, 5) * current_monster.lvl // 2
+        damage = random.randint(2, 5) * current_monster.lvl // 2 - player.armor//2
         print(f"{current_monster.name} attackerar dig och gör {damage} skada!")
         time.sleep(1)
         player.hp = max(0, player.hp - damage)
@@ -591,11 +623,11 @@ def monster_attack(player, current_monster):
 2. Fly
 """).strip().lower()
         if svar == "1" or svar == "attackera" or svar == "attack":
-            damage = random.randint(3, 4) * player.lvl * 20
+            damage = random.randint(3, 4) * player.lvl * 2
             print(f"Du attackerar {current_monster.name} och gör {damage} skada!")
             time.sleep(1)
             current_monster.hp = max(0, current_monster.hp - damage)
-            
+
             if current_monster.hp > 0:
                 print(f"{current_monster.name} överlever med {current_monster.hp} HP kvar.")
                 time.sleep(0.3)
@@ -604,19 +636,20 @@ def monster_attack(player, current_monster):
                 gold_loot = int(current_monster.lvl // 2) ** 2 + 1
                 xp_loot = int((current_monster.lvl) ** 1.5) + 3
                 item_loot = get_loot(current_monster)
+
                 print(f"Du dödade {current_monster.name}, som droppar \033[38;5;226m{gold_loot} guld\033[0m.")
                 if item_loot:
-                    print(f"{current_monster.name} droppar också {item_loot}!")
-                    player_inventory.add_item(str(item_loot))
+                    print(f"{current_monster.name} droppar också {item_loot.name}!")  # Visa föremålets namn
+                    player_inventory.add_item(item_loot)  # Lägg till föremålet i inventoriet
                 else:
-                    print(f"{current_monster.name} droppar inga fler föremål.")
-                print(f"Du överlever med {player.hp} HP.")
-                #Lägg till XP och guld
+                    print(f"{current_monster.name} droppar inga föremål.")
+
+                # Lägg till XP och guld
                 player.gold += gold_loot
                 player.gain_xp(xp_loot)
                 break
         elif svar == "2" or svar == "fly":
-            # Försök att fly
+            #Försök att fly
             dice_roll = random.randint(1, 18) - ((current_monster.lvl) // 2) + player.lvl
             print(f"Du försöker fly från {current_monster.name}...")
             time.sleep(0.5)
@@ -628,6 +661,7 @@ def monster_attack(player, current_monster):
                 time.sleep(0.4)
         else:
             print("Ogiltigt svar, monstret attackerar.")
+
 
 monster_attack(player, current_monster)
 player_command()
