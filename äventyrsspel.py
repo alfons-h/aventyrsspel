@@ -12,21 +12,21 @@ class Player:
         self.xp = xp
         self.armor = armor
         self.gold = gold
-                
-        
+
+
         print("""
-              
+
               """)
         print("Välkommen " + self.name + " till grottkravlare.")
-        print("Du vaknar i mörkret, omgiven av kalla stenväggar.")
+        print("Du vaknar i mörkret, omgiven av kalla stenväggar.")  
         time.sleep(0.5)
         print("Framför dig ser du tre massiva dörrar, var och en med märkliga symboler inristade.")
         time.sleep(1)
         print("Minnet är blankt, men något säger dig att valet du gör här kommer forma ditt öde.")
         time.sleep(1)
-        self.showstats()                    #
-        
-    def showstats(self):        #Funktion för att visa stats
+        self.showstats()                    
+
+    def showstats(self):               #Funktion för att visa stats 
         time.sleep(0.1)
         print()
         time.sleep(0.05)
@@ -47,7 +47,7 @@ class Player:
         print("══════════════════════")
 
     def gain_xp(player, amount):
-        player.xp += amount             #Lägger till XP till spelaren
+        player.xp += amount                                 
         print(f"\033[38;5;34mDu har fått {amount} XP!\033[0m")
         player.check_level_up()         #Kollar om man ska levla upp
 
@@ -55,24 +55,22 @@ class Player:
         xp_needed = 100 + 0.8 * (self.lvl ** 2)     #Det krävs 100 XP + 0.8(level)^2 där
         while self.xp >= xp_needed:                 #Loop som kollar om man har nog med XP för att levla upp
             self.xp -= xp_needed                        #Om man levlar upp så tar den bort allt xp man behöver för den nya leveln
-            self.xp = round(self.xp)                    #Nya XPn rundas till heltals
+            self.xp = round(self.xp)                    #Nya XPn rundas till heltal
             self.lvl += 1                               #Man går upp en level
             xp_needed = 100 + 0.8 * (self.lvl ** 2)
             print(f"\033[38;5;213mGrattis {self.name}, du har nått Level {self.lvl}!\033[0m")
         self.showstats()
-        
+
     def update_armor(self, equipped_armor):             #Funktion för att lägga till armor stats när man tar på sig armor
         total_defense = 0                               #Man börjar med 0 Defense
         for slot, item in equipped_armor.items():       #Loop som kollar efter rustningsdelar
-            if item is not None:                        
-                total_defense += item.defense           #Lägger till armor stats
+            if item is not None:                        #Lägger till armor stats
+                total_defense += item.defense           
         self.armor = total_defense
 
-        
-        
-player = Player(name, 1, 0, 100, 0, 5)                  #Spelares namn, lvl, xp, hp, armor, guld
+player = Player(name, 1, 0, 100, 0, 5)                 #Spelares namn, lvl, xp, hp, armor, guld 
 
-def player_command():                                   #Menyn som öppnas när man dödat ett monster eller flytt där man väljer vad man vill göra
+def player_command():                                   
     while True:
         command = input(
 """
@@ -80,18 +78,18 @@ Vad vill du göra?
 1. Gå vidare (fortsätt)
 2. Visa stats (stats)
 3. Visa inventory (inventory)
-4. Hantera föremål i inventoriet (föremål)
-5. Visa equippade föremål 
+4. Hantera föremål i inventoriet (hantera)
+5. Visa equipment (equipment)
 """).strip().lower()
-        if command in ["fortsätt", "1"]:                #Första valet, gå vidare genom att öppna en ny dörr
+        if command in ["fortsätt", "1"]:              #Första valet, gå vidare genom att öppna en ny dörr  
             choose_door()
-            break                                       # Tillbaks till spel-loopen
+            break                                       #Tillbaks till spel-loopen
         elif command in ["stats", "2"]:                 #Andra valet, visa spelarens stats
             player.showstats()
         elif command in ["inventory", "3"]:             #Tredje valet, visa inventoryt
             player_inventory.show_inventory()
         elif command in ["hantera", "4"]:               #Fjärde valet, ta på sig rustning och svärd
-        
+
             print("\nDitt inventory:")
             items = list(player_inventory.items.keys()) #Skapar en lista av namnen på allt i inventoryt
             index = 1                                   #Gör så att listan börjar på 1
@@ -103,9 +101,10 @@ Vad vill du göra?
             if choice.isdigit():                                                #Ser till så att man skrev en siffra
                 choice = int(choice) - 1                                        #Konvertera till nollbaserat index eftersom pythonlistor börjar på 0
                 if 0 <= choice < len(items):                                    #Ser till så att numret som spelaren skriver inte är mindre (negativ) eller mer än listan
-                    item_name = items[choice]                                   
-                    action = input(f"Vill du 1. Equippa eller 2. Slänga {item_name}?").strip().lower()
-                    if action in ["1", "equip", "equippa", "e"]:
+                    item_name = items[choice]
+                    print(f"Vill du 1. Använda eller 2. Slänga {item_name}?")                                 
+                    action = input().strip().lower()
+                    if action in ["1", "använd", "använda", "a"]:
                         print()
                         print(f"Försöker equippa {item_name}...")
                         item = player_inventory.items[item_name]                #Kopplar föremålet man väljer till inventoryt 
@@ -120,30 +119,39 @@ Vad vill du göra?
                     print("Ogiltigt val.")
             else:
                 print("Ange ett giltigt nummer.")
-        elif command in ["5"]:                                                  #Femte valet, visa alla rustningsdelar som spelaren har tagit på sig
+        elif command in ["5", "föremål", "equipment"]:                          #Femte valet, visa alla rustningsdelar som spelaren har tagit på sig                        
             print("Equippade föremål:")
             for slot, item in player_inventory.equipped_armor.items():          #Loop som skriver ut alla rustnings-slots och vad som finns i dem
                 if item:
                     print(f"{slot.capitalize()}: {item.name}, ({item.defense} försvar)")        #Skriver ut rustningsdel och hur mycket armor stats den har
                 else:
-                    print(f"{slot.capitalize()}: Ingen")                                        #Om man inte har något i en rustnings-slot så skriver den det.
-     
+                    print(f"{slot.capitalize()}: Tom")                                        #Om man inte har något i en rustnings-slot så skriver den det.
+
         else:
             print("Ogiltigt kommando. Försök igen.")
 
-
-
 class Inventory:
     def __init__(self):
-        self.items = {}  #Lagra föremål i ett dictionary
-        self.equipped_armor = {     #Lagra armorn som är på kroppen i ett dictionary
+        self.items = {}  #Lagra föremål i ett "dictionary"
+        self.equipped_armor = {     #Lagra rustningen som är på kroppen i ett dictionary
             "helmet": None,
             "chest": None,
             "legs": None,
         }
         
-    def add_item(self, item, quantity=1):       #Funktion för att lägga till föremål i inventoryt
-        if item.name in self.items:                         #Om föremålet redan finns i inventoryt så ökar dess kvantitet med 1 istället för att läggas till igen som ett nytt föremål
+        self.equipped_weapon = {        #Lagra svärdet handen i ett dictionary
+            "hand": None,
+        }
+
+    def get_equipped_weapon_damage(self):
+        if self.equipped_weapon["hand"] != False:
+            return self.equipped_weapon["hand"].dmg
+        else:
+            return None  # Inget vapen är utrustat
+
+
+    def add_item(self, item, quantity=1):           #Funktion för att lägga till föremål i inventoryt
+        if item.name in self.items:                                 #Om föremålet redan finns i inventoryt så ökar dess kvantitet med 1 istället för att läggas till igen som ett nytt föremål
             self.items[item.name]['quantity'] += quantity 
         else:
             self.items[item.name] = {'item': item, 'quantity': quantity}        #Dictionary för föremål i inventoryt
@@ -155,31 +163,47 @@ class Inventory:
                 self.items[item_name]['quantity'] -= quantity       #Minskar kvantiteten av föremålet i inventoryt med värdet "quantity"
                 print(f"{quantity} {item_name} togs bort.")         
             elif self.items[item_name]['quantity'] == quantity:     #Om antalet föremål i inventoryt i listan är lika stort som man vill ta bort så raderas den istället för att kvantiteten minskas
-                del self.items[item_name]                           #Raderar föremålet
+                del self.items[item_name]                           #Raderar föremålet 
                 print(f"{quantity} {item_name} togs bort och finns inte längre i inventariet.")
             else:
                 print(f"För få {item_name} för att ta bort. Bara {self.items[item_name]['quantity']} är tillgängliga.")     #Om man vill ta bort fler föremål än vad som finns så säger den till
         else:
             print(f"{item_name} hittades inte i inventariet.") #Ifall föremålet inte finns så säger den till
 
-    def show_inventory(self):                                   #Funktion för att visa inventoryt inom player_command
-        if not self.items:                                      #Om self.items (inventoryt) inte finns så säger den det
+    def show_inventory(self):                               #Funktion för att visa inventoryt inom player_command    
+        if not self.items:                                  #Om self.items (inventoryt) inte finns så säger den det    
             print("Ditt inventory är tomt.")
         else:
             print("\nDitt inventory innehåller:")               
             for item_name, data in self.items.items():          #Loop som går igenom alla items i self.items. "Data" används för att koppla till kvantiteten
-                print(f"- {item_name}: {data['quantity']}x")    #Printar alla items och deras kvantitet
+                print(f"- {item_name}: {data['quantity']}x")    #Printar alla items och deras kvantitet 
 
     def equip_item(self, item_name):            #Funktion för att ta på sig armor-delar
         if item_name not in self.items:         #Om ett föremål man försöker equippa inte finns så kan man inte equippa den
             print(f"{item_name} finns inte i ditt inventory.")
             return                              #Avsluta equip_item och återvänd till player_command
 
-
         item = self.items[item_name]['item']        #Hämta föremålet
 
-        if hasattr(item, 'defense'):         #Kontrollera om det är rustning genom att kolla om det är ett item och leta efter 'defense'
-            slot = None                                     
+        if isinstance(item, Sword):
+            if self.equipped_weapon["hand"]:
+                print(f"{self.equipped_weapon['hand'].name} togs av och ersattes med {item.name}.")
+            else:
+                print(f"{item.name} equippades i handen.")
+            self.equipped_weapon["hand"] = item
+            self.remove_item(item_name)
+
+        if isinstance(item, HealingPotion):  
+            max_hp = 90 + 10 * player.lvl  #Max HP baserat på spelarens level
+            if player.hp < max_hp:
+                heal_amount = min(25, max_hp - player.hp) 
+                player.hp += heal_amount
+                print(f"Du använder en {item.name} och återfår {heal_amount} HP!")
+                self.remove_item(item_name)  #Ta bort en potion från inventoryt när den används
+            else:
+                print("Du har redan fullt HP")
+        elif hasattr(item, 'defense'):        #Kontrollera om det är rustning genom att kolla om det är ett item och leta efter 'defense'
+            slot = None
             if "hjälm" in item.name.lower():                #Om föremålet har "hjälm" i namnet så är det en hjälm och kan sättas på huvudet  
                 slot = "helmet"                             
             elif "bröstplåt" in item.name.lower():          #Om föremålet har "bröstplåt" i namnet så är det en bröstplåt och kan sättas på bröstet
@@ -203,7 +227,6 @@ class Inventory:
             print(f"{item_name} är inte ett giltigt föremål för utrustning.")
 
 
-
 player_inventory = Inventory()
 
 class Monster:
@@ -212,12 +235,10 @@ class Monster:
         self.hp = hp
         self.lvl = lvl
         self.img = img                  #Monstrena har bilder utav ASCII-konst
-        self.escape_threshold = 6
+        self.escape_threshold = 5
 
     def __str__(self):
         return f"{self.name}: HP {self.hp}, Level {self.lvl}\n{self.img}"
-
-
 
 rat_img = r"""
            ,     .
@@ -373,130 +394,6 @@ dragon_img = r"""
                                                                                       @@@@@@@         
 """
 
-monsters = [
-    Monster("Råtta", 3, 1, rat_img),
-    Monster("Skorpion", 5, 2, scorpion_img),
-    Monster("Slime", 10, 3, slime_img),
-    Monster("Goblin", 25, 7, goblin_img),
-    Monster("Zombie", 50, 10, zombie_img),
-    Monster("Spöke", 75, 12, ghost_img),
-    Monster("Vampyr", 100, 15, vampire_img),
-    Monster("Varulv", 150, 20, werewolf_img),
-    Monster("Drake", 500, 100, dragon_img)
-]
-
-
-class Sword:
-    def __init__(self, name, damage):
-        self.name = name                    #Svärdets namn
-        self.dmg = damage                   #Svärdets skada
-
-    def __str__(self):
-        return f"{self.name}: Damage {self.dmg}"
-
-
-class Armor:                                #Alla individuella armordelar ingår i class Armor
-    def __init__(self, name, defense):
-        self.name = name
-        self.defense = defense
-
-    def __str__(self):
-        return f"{self.name}: Defense {self.defense}"
-
-
-class Helmet(Armor):
-    def __init__(self, name, defense):
-        super().__init__(name, defense)
-
-
-class ChestArmor(Armor):
-    def __init__(self, name, defense):
-        super().__init__(name, defense)
-
-
-class LegArmor(Armor):
-    def __init__(self, name, defense):
-        super().__init__(name, defense)
-
-
-
-swords = [
-    Sword("Träsvärd", 1),
-    Sword("Stensvärd", 2),
-    Sword("Rostigt Järnsvärd", 4), 
-    Sword("Järnsvärd", 7),
-    Sword("Finslipat Järnsvärd", 12),
-    Sword("Silversvärd", 15),
-    Sword("Helvetets Skrik", 35),
-    Sword("Blodherrens Rappir", 60),
-    Sword("Excalibur", 100)
-]
-
-
-helmets = [
-    Helmet("Järnhjälm", 5),
-    Helmet("Silverhjälm", 10),
-    Helmet("Gyllene Hjälm", 15),
-    Helmet("Stormhjälm", 20),
-    Helmet("Drakhjälm", 30),
-]
-
-
-chest_armors = [
-    ChestArmor("Järnbröstplåt", 10),
-    ChestArmor("Silverbröstplåt", 15),
-    ChestArmor("Gyllene Bröstplåt", 20),
-    ChestArmor("Stormbröstplåt", 30),
-    ChestArmor("Drakbröstplåt", 40),
-]
-
-
-leg_armors = [
-    LegArmor("Järnbenskydd", 8),
-    LegArmor("Silverbenskydd", 12),
-    LegArmor("Gyllene Benskydd", 18),
-    LegArmor("Stormbenskydd", 25),
-    LegArmor("Drakbenskydd", 35),
-]
-
-
-def choose_door():
-    print("Du står framför tre dörrar. Vilken vill du öppna?")
-    time.sleep(1)
-    print("1. Dörr 1")
-    print("2. Dörr 2")
-    print("3. Dörr 3")
-    
-    while True:
-        choice = input("Skriv numret på dörren du vill öppna (1, 2 eller 3): ").strip()
-        if choice in ["1", "2", "3"]:
-            print(f"Du öppnar dörr {choice}...")
-            time.sleep(2)
-            
-            #Skapa nytt monster
-            global current_monster
-            current_monster = get_custom_monster(name, monsters)
-            print(current_monster)
-            print(f"Du stöter på level {current_monster.lvl} {current_monster.name}.")
-            print(f"{current_monster.name} har {current_monster.hp} HP.")
-            time.sleep(1)
-
-            #Tillbaks till spel-loopen
-            break
-        else:
-            print("Ogiltigt val, försök igen.")
-
-def get_custom_monster(name, monsters): 
-    for monster in monsters:
-        if name.lower() == monster.name.lower(): #Debug-tillägg så att vi kan välja vilket monster som ska spawnas
-            return Monster(monster.name, monster.hp, monster.lvl, monster.img)
-    chosen_monster = random.choice(monsters)
-    return Monster(chosen_monster.name, chosen_monster.hp, chosen_monster.lvl, chosen_monster.img)
-
-
-choose_door()
-
-
 death_screen = """                                                                                                                                                                                                        [0m
                                                                                                                                                                                                         [0m
                                                                                                                                                                                                         [0m
@@ -523,13 +420,166 @@ death_screen = """                                                              
                                                                                                                                                                                                         [0m
 """
 
+monsters = [
+    Monster("Råtta", 3, 1, rat_img),
+    Monster("Skorpion", 5, 2, scorpion_img),
+    Monster("Slime", 10, 3, slime_img),
+    Monster("Goblin", 25, 7, goblin_img),
+    Monster("Zombie", 50, 10, zombie_img),
+    Monster("Spöke", 75, 12, ghost_img),
+    Monster("Vampyr", 100, 15, vampire_img),
+    Monster("Varulv", 150, 20, werewolf_img),
+    Monster("Drake", 500, 100, dragon_img)
+]
+
+class Sword:
+    def __init__(self, name, damage):
+        self.name = name                    #Svärdets namn
+        self.dmg = damage                   #Svärdets skada             
+
+    def __str__(self):
+        return f"{self.name}: Damage {self.dmg}"
+
+class Armor:                                #Alla individuella armordelar ingår i class Armor
+    def __init__(self, name, defense):
+        self.name = name
+        self.defense = defense
+
+    def __str__(self):
+        return f"{self.name}: Defense {self.defense}"
+
+class Helmet(Armor):
+    def __init__(self, name, defense):
+        super().__init__(name, defense)
+
+class ChestArmor(Armor):
+    def __init__(self, name, defense):
+        super().__init__(name, defense)
+
+class LegArmor(Armor):
+    def __init__(self, name, defense):
+        super().__init__(name, defense)
+        
+class HealingPotion:
+    def __init__(self):
+        self.name = "Livsdryck"
+
+swords = [
+    Sword("Träsvärd", 1),
+    Sword("Stensvärd", 2),
+    Sword("Rostigt Järnsvärd", 4), 
+    Sword("Järnsvärd", 7),
+    Sword("Finslipat Järnsvärd", 12),
+    Sword("Silversvärd", 15),
+    Sword("Helvetets Skrik", 35),
+    Sword("Blodherrens Rappir", 60),
+    Sword("Excalibur", 100)
+]
+
+helmets = [
+    Helmet("Järnhjälm", 5),
+    Helmet("Silverhjälm", 10),
+    Helmet("Gyllene Hjälm", 15),
+    Helmet("Stormhjälm", 20),
+    Helmet("Drakhjälm", 30),
+]
+
+chest_armors = [
+    ChestArmor("Järnbröstplåt", 10),
+    ChestArmor("Silverbröstplåt", 15),
+    ChestArmor("Gyllene Bröstplåt", 20),
+    ChestArmor("Stormbröstplåt", 30),
+    ChestArmor("Drakbröstplåt", 40),
+]
+
+leg_armors = [
+    LegArmor("Järnbenskydd", 8),
+    LegArmor("Silverbenskydd", 12),
+    LegArmor("Gyllene Benskydd", 18),
+    LegArmor("Stormbenskydd", 25),
+    LegArmor("Drakbenskydd", 35),
+]
+
+def choose_door():
+    print("Du står framför tre dörrar. Vilken vill du öppna?")
+    time.sleep(1)
+    print("1. Dörr 1")
+    print("2. Dörr 2")
+    print("3. Dörr 3")
+
+    while True:
+        choice = input("Skriv numret på dörren du vill öppna (1, 2 eller 3): ").strip()
+        if choice in ["1", "2", "3"]:
+            print(f"Du öppnar dörr {choice}...")
+            time.sleep(2)
+
+            chance = random.randint(1, 100)
+
+            if chance <= 50:
+                global current_monster #Skapa nytt monster
+                current_monster = get_custom_monster(name, monsters)
+                print(f"Du stöter på level {current_monster.lvl} {current_monster.name}.")
+                print(f"{current_monster.name} har {current_monster.hp} HP.")
+                monster_attack(player, current_monster)
+                break            #Tillbaks till spel-loopen
+
+            elif chance <= 75:
+                damage = random.randint(5, 15)
+                player.hp = max(0, player.hp - damage)
+                print(f"En fälla aktiveras! Du tar {damage} skada. Du har nu {player.hp} HP kvar.")
+                if player.hp <= 0:
+                    print(death_screen)
+                    exit()
+                player_command() 
+                return
+
+            elif chance > 75:
+                print("Du hittade en kista!")
+                time.sleep(1)
+                loot_chance = random.randint(1, 100)
+
+                if loot_chance <= 50:
+                    chest_gold = random.randint(10, 50)
+                    player.gold += chest_gold
+                    print(f"Du öppnar kistan och hittar {chest_gold} guld!")
+                elif loot_chance <= 80:
+                    healing_potion = HealingPotion()
+                    print("Du öppnar kistan och hittar en livsdryck!")
+                    player_inventory.add_item(healing_potion, 1)
+                else:
+                    loot_type = random.choice(["helmet", "chest", "legs", "sword"])
+                    if loot_type == "helmet":
+                        item = random.choice(helmets)
+                    elif loot_type == "chest":
+                        item = random.choice(chest_armors)
+                    elif loot_type == "legs":
+                        item = random.choice(leg_armors)
+                    elif loot_type == "sword":
+                        item = random.choice(swords)
+
+                    print(f"Du öppnar kistan och hittar {item.name}!")
+                    player_inventory.add_item(item, 1)
+                player_command()
+                return
+            time.sleep(1)
+        else:
+            print("Ogiltigt val, försök igen.")
+            
+    if current_monster == False:
+        return
+
+def get_custom_monster(name, monsters): 
+    for monster in monsters:
+        if name.lower() == monster.name.lower(): #Debug-tillägg så att vi kan välja vilket monster som ska spawnas
+            return Monster(monster.name, monster.hp, monster.lvl, monster.img)
+    chosen_monster = random.choice(monsters)
+    return Monster(chosen_monster.name, chosen_monster.hp, chosen_monster.lvl, chosen_monster.img)
 
 def get_loot(current_monster):
     loot_chance = random.randint(1, 100)
     item = None
 
-    # Definiera en loot-tabell för varje monster
-    loot_tables = {
+    loot_tables = {             #Loot-tabell för varje monster
         "Råtta": {
             "common": None,  # Ingen loot
         },
@@ -579,21 +629,50 @@ def get_loot(current_monster):
         },
     }
 
-    loot_table = loot_tables.get(current_monster.name)
+
+    healing_potion_drops = {
+        "Råtta": (25, 1),
+        "Skorpion": (40, 1),
+        "Slime": (50, 1),
+        "Goblin": (70, 2),
+        "Zombie": (80, 2),
+        "Spöke": (90, 2),
+        "Vampyr": (100, 4),
+        "Varulv": (100, 5),
+        "Drake": (100, 8),
+    }
+    quantity=0
+    if current_monster.name in healing_potion_drops:
+        chance, max_potions = healing_potion_drops[current_monster.name]
+        if random.randint(1, 100) <= chance:
+            quantity = random.randint(1, max_potions)
+            if quantity == 1:
+                print(f"{current_monster.name} droppade {quantity} livsdryck!")
+            else:
+                print(f"{current_monster.name} droppade {quantity} livsdrycker!")
+            player_inventory.add_item(HealingPotion(), quantity)
+        elif quantity == 0:
+            print(f"{current_monster.name} droppade inga livsdrycker.")
     
+
+    loot_table = loot_tables.get(current_monster.name)
+
     if loot_table:
             for category, chance_limit in zip(["common", "uncommon", "rare"], loot_table.get("chance", [])):
                 if loot_chance <= chance_limit:
                     if loot_table.get(category):
-                        item_name = random.choice(loot_table[category])
+                        item_name = random.choice(loot_table[category])                        #Skapa rätt typ av föremål baserat på namnet
 
-                        # Skapa rätt typ av objekt baserat på namnet
                         if "svärd" in item_name.lower():
-                            item = Sword(item_name, random.randint(5, 15))  # Exempel: skapa ett svärd
+                            item = Sword(item_name, random.randint(5, 15))
+                        elif "rappir" in item_name.lower():
+                            item = Sword(item_name, random.randint(5, 15))
+                        if "excalibur" in item_name.lower():
+                            item = Sword(item_name, random.randint(5, 15))
                         elif "hjälm" in item_name.lower():
-                            item = Helmet(item_name, random.randint(3, 8))  # Exempel: skapa en hjälm
+                            item = Helmet(item_name, random.randint(3, 8))
                         elif "bröstplåt" in item_name.lower():
-                            item = ChestArmor(item_name, random.randint(5, 12))  # Exempel: skapa bröstplåt
+                            item = ChestArmor(item_name, random.randint(5, 12)) 
                         elif "benskydd" in item_name.lower():
                             item = LegArmor(item_name, random.randint(4, 10))  
                     break
@@ -601,11 +680,10 @@ def get_loot(current_monster):
     return item 
 
 
-
 def monster_attack(player, current_monster):
     while current_monster.hp > 0 and player.hp > 0:
         # Monstrets attack
-        damage = random.randint(2, 5) * current_monster.lvl // 2 - player.armor//2
+        damage = random.randint(2, 5) * current_monster.lvl
         print(f"{current_monster.name} attackerar dig och gör {damage} skada!")
         time.sleep(1)
         player.hp = max(0, player.hp - damage)
@@ -614,16 +692,21 @@ def monster_attack(player, current_monster):
             print(f"Du överlever med {player.hp} HP kvar.")
             time.sleep(0.2)
         else:
+            print(f"{current_monster.name} dödade dig...")
             print(death_screen)
             exit()
 
         # Spelarens attack eller flykt
-        svar = input("""Vad vill du göra?
+        response = input("""Vad vill du göra?
 1. Attackera
 2. Fly
 """).strip().lower()
-        if svar == "1" or svar == "attackera" or svar == "attack":
-            damage = random.randint(3, 4) * player.lvl * 2
+
+        if response in ["1", "attackera", "attack"]:
+            if player_inventory.equipped_weapon["hand"]:
+                damage = random.randint(3, 4) * player_inventory.equipped_weapon["hand"].dmg + 2 * player.lvl
+            else:
+                damage = random.randint(3, 4) + 2 * player.lvl
             print(f"Du attackerar {current_monster.name} och gör {damage} skada!")
             time.sleep(1)
             current_monster.hp = max(0, current_monster.hp - damage)
@@ -632,8 +715,9 @@ def monster_attack(player, current_monster):
                 print(f"{current_monster.name} överlever med {current_monster.hp} HP kvar.")
                 time.sleep(0.3)
             else:
+                print(f"Du besegrade {current_monster.name}!")
                 #Räknar ut loot
-                gold_loot = int(current_monster.lvl // 2) ** 2 + 1
+                gold_loot = int(current_monster.lvl)
                 xp_loot = int((current_monster.lvl) ** 1.5) + 3
                 item_loot = get_loot(current_monster)
 
@@ -648,9 +732,9 @@ def monster_attack(player, current_monster):
                 player.gold += gold_loot
                 player.gain_xp(xp_loot)
                 break
-        elif svar == "2" or svar == "fly":
+        elif response in ["2", "fly"]:
             #Försök att fly
-            dice_roll = random.randint(1, 18) - ((current_monster.lvl) // 2) + player.lvl
+            dice_roll = random.randint(1, 20) - (current_monster.lvl) + (player.lvl)
             print(f"Du försöker fly från {current_monster.name}...")
             time.sleep(0.5)
             if dice_roll > current_monster.escape_threshold:
@@ -660,13 +744,14 @@ def monster_attack(player, current_monster):
                 print(f"Du misslyckades att fly från {current_monster.name}.")
                 time.sleep(0.4)
         else:
-            print("Ogiltigt svar, monstret attackerar.")
+            print("Ogiltigt svar, monstret attackerar igen.")
 
+choose_door()
 
 monster_attack(player, current_monster)
 player_command()
 
-# SPEL-LOOP
+#SPEL-LOOP
 while True:
     if 'current_monster' not in globals() or current_monster.hp <= 0:
         choose_door()
