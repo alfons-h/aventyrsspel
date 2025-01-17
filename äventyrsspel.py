@@ -70,7 +70,7 @@ class Player:
 
 player = Player(name, 1, 0, 100, 0, 5)                 #Spelares namn, lvl, xp, hp, armor, guld 
 
-def player_command():                                   
+def player_command():                                   #Menyn som öppnas när man dödat ett monster eller flytt där man väljer vad man vill göra
     while True:
         command = input(
 """
@@ -717,7 +717,7 @@ def monster_attack(player, current_monster):
             else:
                 print(f"Du besegrade {current_monster.name}!")
                 #Räknar ut loot
-                gold_loot = int(current_monster.lvl)
+                gold_loot = int(current_monster.lvl // 2) ** 2 + 1
                 xp_loot = int((current_monster.lvl) ** 1.5) + 3
                 item_loot = get_loot(current_monster)
 
