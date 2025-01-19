@@ -28,7 +28,6 @@ class Player:
 
     def showstats(self):               #Funktion för att visa stats 
         time.sleep(0.1)
-        time.sleep(0.05)
         print("\n     Spelar Stats     ")
         time.sleep(0.05)
         print("══════════════════════")
