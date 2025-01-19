@@ -28,9 +28,8 @@ class Player:
 
     def showstats(self):               #Funktion för att visa stats 
         time.sleep(0.1)
-        print()
         time.sleep(0.05)
-        print("     Spelar Stats     ")
+        print("\n     Spelar Stats     ")
         time.sleep(0.05)
         print("══════════════════════")
         print(f"Spelarnamn: {self.name}")
@@ -41,7 +40,7 @@ class Player:
         time.sleep(0.05)
         print(f"\033[38;5;196mHP:\033[0m {self.hp}")
         time.sleep(0.05)
-        print(f"\033[38;5;153mArmor:\033[0m {self.armor}")
+        print(f"\033[38;5;153mFörsvar:\033[0m {self.armor}")
         time.sleep(0.05)
         print(f"\033[38;5;226mGuld:\033[0m {self.gold}")
         print("══════════════════════")
@@ -78,17 +77,18 @@ Vad vill du göra?
 1. Gå vidare (fortsätt)
 2. Visa stats (stats)
 3. Visa inventory (inventory)
-4. Hantera föremål i inventoriet (hantera)
+4. Hantera föremål i inventoriet (hantera föremål)
 5. Visa equipment (equipment)
+6. Hantera equipment
 """).strip().lower()
-        if command in ["fortsätt", "1"]:              #Första valet, gå vidare genom att öppna en ny dörr  
+        if command in ["fortsätt", "1", "gå vidare"]:              #Första valet, gå vidare genom att öppna en ny dörr  
             choose_door()
             break                                       #Tillbaks till spel-loopen
-        elif command in ["stats", "2"]:                 #Andra valet, visa spelarens stats
+        elif command in ["stats", "2", "visa stats"]:                 #Andra valet, visa spelarens stats
             player.showstats()
-        elif command in ["inventory", "3"]:             #Tredje valet, visa inventoryt
+        elif command in ["inventory", "3", "visa inventory"]:             #Tredje valet, visa inventoryt
             player_inventory.show_inventory()
-        elif command in ["hantera", "4"]:               #Fjärde valet, ta på sig rustning och svärd
+        elif command in ["hantera", "4", "hantera föremål", "hantera"]:               #Fjärde valet, ta på sig rustning och svärd
 
             print("\nDitt inventory:")
             items = list(player_inventory.items.keys()) #Skapar en lista av namnen på allt i inventoryt
@@ -105,8 +105,7 @@ Vad vill du göra?
                     print(f"Vill du 1. Använda eller 2. Slänga {item_name}?")                                 
                     action = input().strip().lower()
                     if action in ["1", "använd", "använda", "a"]:
-                        print()
-                        print(f"Försöker equippa {item_name}...")
+                        print(f"\nFörsöker equippa {item_name}...")
                         item = player_inventory.items[item_name]                #Kopplar föremålet man väljer till inventoryt 
                         player_inventory.equip_item(item_name)                  #Startar equip-funktionen för det föremålet man valt
 
@@ -119,16 +118,75 @@ Vad vill du göra?
                     print("Ogiltigt val.")
             else:
                 print("Ange ett giltigt nummer.")
-        elif command in ["5", "föremål", "equipment"]:                          #Femte valet, visa alla rustningsdelar som spelaren har tagit på sig                        
+        elif command in ["5", "visa equipment", "equipment"]:                          #Femte valet, visa alla rustningsdelar som spelaren har tagit på sig                        
             print("Equippade föremål:")
             for slot, item in player_inventory.equipped_armor.items():          #Loop som skriver ut alla rustnings-slots och vad som finns i dem
                 if item:
                     print(f"{slot.capitalize()}: {item.name}, ({item.defense} försvar)")        #Skriver ut rustningsdel och hur mycket armor stats den har
                 else:
                     print(f"{slot.capitalize()}: Tom")                                        #Om man inte har något i en rustnings-slot så skriver den det.
+        elif command in ["6", "hantera equipment"]:                                     #Sjätte valet, ta av sig utrustning (svärd, rustning)
+            print("\nUtrustade föremål:")
 
-        else:
-            print("Ogiltigt kommando. Försök igen.")
+            if player_inventory.equipped_armor["helmet"]:
+                print("Hjälm: " + player_inventory.equipped_armor["helmet"].name + " (" + str(player_inventory.equipped_armor["helmet"].defense) + " försvar)")             #Berätta vilken hjälm man har 
+            else:
+                print("Hjälm: Tom")
+
+            if player_inventory.equipped_armor["chest"]:
+                print("Bröstplåt: " + player_inventory.equipped_armor["chest"].name + " (" + str(player_inventory.equipped_armor["chest"].defense) + " försvar)")           #Berätta vilken bröstplåt man har
+            else:
+                print("Bröstplåt: Tom")
+
+            if player_inventory.equipped_armor["legs"]:
+                print("Benskydd: " + player_inventory.equipped_armor["legs"].name + " (" + str(player_inventory.equipped_armor["legs"].defense) + " försvar)")              #Berätta vilka benskydd man har
+            else:
+                print("Benskydd: Tom")
+
+            if player_inventory.equipped_weapon["hand"]:
+                print("Hand: " + player_inventory.equipped_weapon["hand"].name + " (" + str(player_inventory.equipped_weapon["hand"].dmg) + " skada)")                      #Berätta vilket svärd man har
+            else:
+                print("Hand: Tom")
+
+            print("\nVilken utrustning vill du ta av dig?")
+            print("1. Hjälm")
+            print("2. Bröstplåt")
+            print("3. Benskydd")
+            print("4. Svärd")
+
+            choice = input("Skriv namnet på utrustningen eller numret: ").strip().lower()               #Välj vad man vill unequippa
+
+            if choice in ["1", "hjälm"]:
+                slot = "helmet"
+            elif choice in ["2", "bröstplåt"]:
+                slot = "chest"
+            elif choice in ["3", "benskydd"]:
+                slot = "legs"
+            elif choice in ["4", "svärd"]:
+                slot = "hand"
+            else:
+                print("Ogiltigt val.")
+                slot = None
+
+            if slot:
+                if slot == "hand":
+                    if player_inventory.equipped_weapon["hand"]:
+                        removed_item = player_inventory.equipped_weapon["hand"]
+                        player_inventory.add_item(removed_item)                 #Lägg tillbaks i inventory
+                        player_inventory.equipped_weapon["hand"] = None         #Ta ut svärdet ur handen
+                        print("Du tog av dig " + removed_item.name + ".")
+                    else:
+                        print("Det finns inget svärd att ta av.")
+                else:
+                    if player_inventory.equipped_armor[slot]:
+                        removed_item = player_inventory.equipped_armor[slot]
+                        player_inventory.add_item(removed_item)                 #Lägg tillbaka i inventory
+                        player_inventory.equipped_armor[slot] = None            #Ta av rustningen
+                        player.update_armor(player_inventory.equipped_armor)    #Uppdatera armor-stat
+                        print("Du tog av dig " + removed_item.name + ".")
+                    else:
+                        print("Det finns ingen rustning att ta av här.")
+
 
 class Inventory:
     def __init__(self):
@@ -143,11 +201,6 @@ class Inventory:
             "hand": None,
         }
 
-    def get_equipped_weapon_damage(self):
-        if self.equipped_weapon["hand"] != False:
-            return self.equipped_weapon["hand"].dmg
-        else:
-            return None  # Inget vapen är utrustat
 
 
     def add_item(self, item, quantity=1):           #Funktion för att lägga till föremål i inventoryt
@@ -193,7 +246,7 @@ class Inventory:
             self.equipped_weapon["hand"] = item
             self.remove_item(item_name)
 
-        if isinstance(item, HealingPotion):  
+        if isinstance(item, HealingPotion):  #Om man försöker "equippa"/använda en healing potion så healas man med upp till 25 HP eller tills man når max HP
             max_hp = 90 + 10 * player.lvl  #Max HP baserat på spelarens level
             if player.hp < max_hp:
                 heal_amount = min(25, max_hp - player.hp) 
@@ -230,7 +283,7 @@ class Inventory:
 player_inventory = Inventory()
 
 class Monster:
-    def __init__(self, name, hp, lvl, img,):
+    def __init__(self, name, hp, lvl, img,):        #Monstrens stats
         self.name = name
         self.hp = hp
         self.lvl = lvl
@@ -450,15 +503,15 @@ class Armor:                                #Alla individuella armordelar ingår
 
 class Helmet(Armor):
     def __init__(self, name, defense):
-        super().__init__(name, defense)
+        Armor.__init__(name, defense)
 
 class ChestArmor(Armor):
     def __init__(self, name, defense):
-        super().__init__(name, defense)
+        Armor.__init__(name, defense)
 
 class LegArmor(Armor):
     def __init__(self, name, defense):
-        super().__init__(name, defense)
+        Armor.__init__(name, defense)
         
 class HealingPotion:
     def __init__(self):
@@ -500,7 +553,7 @@ leg_armors = [
     LegArmor("Drakbenskydd", 35),
 ]
 
-def choose_door():
+def choose_door():                                                          #Funktion som tillhör spel-loopen där man väljer en dörr att öppna
     print("Du står framför tre dörrar. Vilken vill du öppna?")
     time.sleep(1)
     print("1. Dörr 1")
@@ -513,7 +566,7 @@ def choose_door():
             print(f"Du öppnar dörr {choice}...")
             time.sleep(2)
 
-            chance = random.randint(1, 100)
+            chance = random.randint(1, 100)                     #Slumpar om man ska stöta på monster, fälla eller skattkista
 
             if chance <= 50:
                 global current_monster #Skapa nytt monster
@@ -536,10 +589,10 @@ def choose_door():
             elif chance > 75:
                 print("Du hittade en kista!")
                 time.sleep(1)
-                loot_chance = random.randint(1, 100)
+                loot_chance = random.randint(1, 100)            #Slumpar ytterligare en gång om man ska få guld, healing potions eller utrustning 
 
                 if loot_chance <= 50:
-                    chest_gold = random.randint(10, 50)
+                    chest_gold = random.randint(10, 50)     #Slumpar hur mycket guld man får
                     player.gold += chest_gold
                     print(f"Du öppnar kistan och hittar {chest_gold} guld!")
                 elif loot_chance <= 80:
@@ -547,7 +600,7 @@ def choose_door():
                     print("Du öppnar kistan och hittar en livsdryck!")
                     player_inventory.add_item(healing_potion, 1)
                 else:
-                    loot_type = random.choice(["helmet", "chest", "legs", "sword"])
+                    loot_type = random.choice(["helmet", "chest", "legs", "sword"])         #Slumpar vilken sorts rustning eller svärd man får
                     if loot_type == "helmet":
                         item = random.choice(helmets)
                     elif loot_type == "chest":
@@ -558,7 +611,7 @@ def choose_door():
                         item = random.choice(swords)
 
                     print(f"Du öppnar kistan och hittar {item.name}!")
-                    player_inventory.add_item(item, 1)
+                    player_inventory.add_item(item, 1)                      #Lägger till loot i inventoryt med kvantitet 1x
                 player_command()
                 return
             time.sleep(1)
@@ -572,14 +625,14 @@ def get_custom_monster(name, monsters):
     for monster in monsters:
         if name.lower() == monster.name.lower(): #Debug-tillägg så att vi kan välja vilket monster som ska spawnas
             return Monster(monster.name, monster.hp, monster.lvl, monster.img)
-    chosen_monster = random.choice(monsters)
+    chosen_monster = random.choice(monsters)        #Annars slumpa monstret
     return Monster(chosen_monster.name, chosen_monster.hp, chosen_monster.lvl, chosen_monster.img)
 
 def get_loot(current_monster):
     loot_chance = random.randint(1, 100)
     item = None
 
-    loot_tables = {             #Loot-tabell för varje monster
+    loot_tables = {             #Loot-tabell för varje monster (dictionary)
         "Råtta": {
             "common": None,  # Ingen loot
         },
@@ -631,21 +684,21 @@ def get_loot(current_monster):
 
 
     healing_potion_drops = {
-        "Råtta": (25, 1),
-        "Skorpion": (40, 1),
-        "Slime": (50, 1),
-        "Goblin": (70, 2),
-        "Zombie": (80, 2),
-        "Spöke": (90, 2),
-        "Vampyr": (100, 4),
-        "Varulv": (100, 5),
-        "Drake": (100, 8),
+        "Råtta": (25, 1),         #25% chans att droppa 1 potion 
+        "Skorpion": (40, 1),      #40% chans att droppa 1 potion
+        "Slime": (50, 1),         #50% chans att droppa 1 potion
+        "Goblin": (70, 2),        #70% chans att droppa upp till 2 potions
+        "Zombie": (80, 2),        #80% chans att droppa upp till 2 potions
+        "Spöke": (90, 2),         #90% chans att droppa upp till 2 potions
+        "Vampyr": (100, 4),       #100% chans chans att droppa upp till 4 potions
+        "Varulv": (100, 5),       #100% chans chans att droppa upp till 5 potions
+        "Drake": (100, 8),        #100% chans chans att droppa upp till 8 potions
     }
     quantity=0
     if current_monster.name in healing_potion_drops:
         chance, max_potions = healing_potion_drops[current_monster.name]
-        if random.randint(1, 100) <= chance:
-            quantity = random.randint(1, max_potions)
+        if random.randint(1, 100) <= chance:        #Slumpar om monstret ska droppa potion
+            quantity = random.randint(1, max_potions)   #Slumpar hur många potions
             if quantity == 1:
                 print(f"{current_monster.name} droppade {quantity} livsdryck!")
             else:
@@ -655,10 +708,10 @@ def get_loot(current_monster):
             print(f"{current_monster.name} droppade inga livsdrycker.")
     
 
-    loot_table = loot_tables.get(current_monster.name)
+    loot_table = loot_tables.get(current_monster.name)      #Hämtar loot från loot_tables
 
     if loot_table:
-            for category, chance_limit in zip(["common", "uncommon", "rare"], loot_table.get("chance", [])):
+            for category, chance_limit in zip(["common", "uncommon", "rare"], loot_table.get("chance", [])):   #Hämtar både kategorin (common, rare etc) och dess chanser att droppa looten
                 if loot_chance <= chance_limit:
                     if loot_table.get(category):
                         item_name = random.choice(loot_table[category])                        #Skapa rätt typ av föremål baserat på namnet
@@ -682,11 +735,11 @@ def get_loot(current_monster):
 
 def monster_attack(player, current_monster):
     while current_monster.hp > 0 and player.hp > 0:
-        # Monstrets attack
-        damage = random.randint(2, 5) * current_monster.lvl
+        # Monstrets attack:
+        damage = random.randint(2, 5) * current_monster.lvl                     #Formel för skadan monstret gör
         print(f"{current_monster.name} attackerar dig och gör {damage} skada!")
         time.sleep(1)
-        player.hp = max(0, player.hp - damage)
+        player.hp = max(0, player.hp - damage)                                  #
 
         if player.hp > 0:
             print(f"Du överlever med {player.hp} HP kvar.")
@@ -704,7 +757,7 @@ def monster_attack(player, current_monster):
 
         if response in ["1", "attackera", "attack"]:
             if player_inventory.equipped_weapon["hand"]:
-                damage = random.randint(3, 4) * player_inventory.equipped_weapon["hand"].dmg + 2 * player.lvl
+                damage = random.randint(3, 4) * player_inventory.equipped_weapon["hand"].dmg + 2 * player.lvl   #Formel för skadan spelaren gör
             else:
                 damage = random.randint(3, 4) + 2 * player.lvl
             print(f"Du attackerar {current_monster.name} och gör {damage} skada!")
