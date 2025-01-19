@@ -14,10 +14,8 @@ class Player:
         self.gold = gold
 
 
-        print("""
 
-              """)
-        print("Välkommen " + self.name + " till grottkravlare.")
+        print("\n\n\nVälkommen " + self.name + " till grottkravlare.")
         print("Du vaknar i mörkret, omgiven av kalla stenväggar.")  
         time.sleep(0.5)
         print("Framför dig ser du tre massiva dörrar, var och en med märkliga symboler inristade.")
@@ -78,7 +76,7 @@ Vad vill du göra?
 3. Visa inventory (inventory)
 4. Hantera föremål i inventoriet (hantera föremål)
 5. Visa equipment (equipment)
-6. Hantera equipment
+6. Ta av equipment (unequip)
 """).strip().lower()
         if command in ["fortsätt", "1", "gå vidare"]:              #Första valet, gå vidare genom att öppna en ny dörr  
             choose_door()
@@ -124,7 +122,7 @@ Vad vill du göra?
                     print(f"{slot.capitalize()}: {item.name}, ({item.defense} försvar)")        #Skriver ut rustningsdel och hur mycket armor stats den har
                 else:
                     print(f"{slot.capitalize()}: Tom")                                        #Om man inte har något i en rustnings-slot så skriver den det.
-        elif command in ["6", "hantera equipment"]:                                     #Sjätte valet, ta av sig utrustning (svärd, rustning)
+        elif command in ["6", "hantera equipment", "unequip"]:                                     #Sjätte valet, ta av sig utrustning (svärd, rustning)
             print("\nUtrustade föremål:")
 
             if player_inventory.equipped_armor["helmet"]:
@@ -502,15 +500,15 @@ class Armor:                                #Alla individuella armordelar ingår
 
 class Helmet(Armor):
     def __init__(self, name, defense):
-        Armor.__init__(name, defense)
+        super().__init__(name, defense)
 
 class ChestArmor(Armor):
     def __init__(self, name, defense):
-        Armor.__init__(name, defense)
+        super().__init__(name, defense)
 
 class LegArmor(Armor):
     def __init__(self, name, defense):
-        Armor.__init__(name, defense)
+        super().__init__(name, defense)
         
 class HealingPotion:
     def __init__(self):
@@ -572,6 +570,9 @@ def choose_door():                                                          #Fun
                 current_monster = get_custom_monster(name, monsters)
                 print(f"Du stöter på level {current_monster.lvl} {current_monster.name}.")
                 print(f"{current_monster.name} har {current_monster.hp} HP.")
+                time.sleep(1)
+                print(current_monster.img)
+                time.sleep(1)
                 monster_attack(player, current_monster)
                 break            #Tillbaks till spel-loopen
 
